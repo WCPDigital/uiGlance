@@ -1,2 +1,2 @@
 # uiGlide
-A JavaScript and jQuery plugin for UI Guides, App. help and workflow demonstrations.
+A JavaScript and jQuery plugin for user interface (UI) guides, interactive application help and workflow demonstrations.
