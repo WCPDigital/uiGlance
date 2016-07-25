@@ -38,7 +38,14 @@
 	box-shadow:0 0 20px 0px #222;
 	z-index:9998;
 }
-
+.uig-focus-content{
+	position:absolute;
+	top:0;
+	left:0;
+	bottom:0;
+	right:0;
+	padding:60px 20px;
+}
 .uig-box{
 	background:transparent url('bg-white-transparent.png');
 	opacity:0.85;

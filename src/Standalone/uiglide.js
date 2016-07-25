@@ -65,6 +65,10 @@ function uiGlide( args )
 		,cssTopBox:"uig-box uig-box-top"
 		,cssBottomBox:"uig-box uig-box-bottom"
 		,cssFocusBox:"uig-focusbox"
+		,cssFocusBoxLeft:"uig-focusbox-left"
+		,cssFocusBoxRight:"uig-focusbox-right"
+		,cssFocusBoxTop:"uig-focusbox-top"
+		,cssFocusBoxBottom:"uig-focusbox-bottom"
 		,cssFocusContent:"uig-focus-content"
 		,cssTitleBox:"uig-titlebox"
 		,cssDescBox:"uig-descbox"
@@ -186,6 +190,8 @@ function uiGlide( args )
 		var startLeft = parseInt(focusBoxEl.style.left, 10);
 		var startTop = parseInt(focusBoxEl.style.top, 10);
 		
+		removePositionalClasses();
+		
 		// Begin Animation
 		self.animate( function( percent ){
 
@@ -227,6 +233,8 @@ function uiGlide( args )
 
 		}, settings.transition, function(){
 			isAnimating = false;
+			
+			addPositionalClasses();
 			
 			if( currentStep && currentStep.onStep )
 				currentStep.onStep( self );
@@ -284,6 +292,46 @@ function uiGlide( args )
 		bottomBoxEl.style.left = focusLeft+"px";
 		bottomBoxEl.style.top = (focusTop+focusHeight)+"px";
 		bottomBoxEl.style.bottom = "auto";
+	}
+	
+	,addPositionalClasses = function()
+	{
+			// Get the target object sdimensions
+		var focusRect = self.getElementRect( focusBoxEl );
+		var docRect = self.documentOutterRect();
+		var topDelta = (focusRect.top-docRect.top)
+			,bottomDelta = (docRect.top+docRect.height) - (focusRect.top+focusRect.height) 
+			,leftDelta = (focusRect.left-docRect.left) 
+			,rightDelta = (docRect.left+docRect.width) - (focusRect.left+focusRect.width);
+			
+			console.log(topDelta+", "+bottomDelta);
+		if( topDelta <= bottomDelta){
+			self.addClass(focusBoxEl,settings.cssFocusBoxTop);
+		}
+		else{
+			self.addClass(focusBoxEl,settings.cssFocusBoxBottom);
+		}
+			
+			console.log(leftDelta+", "+rightDelta);
+		if( leftDelta <= rightDelta){
+			self.addClass(focusBoxEl,settings.cssFocusBoxLeft);
+		}
+		else{
+			self.addClass(focusBoxEl,settings.cssFocusBoxRight);
+		}		
+	}
+	
+	,removePositionalClasses = function()
+	{
+		var arr = [
+			settings.cssFocusBoxLeft
+			,settings.cssFocusBoxRight
+			,settings.cssFocusBoxTop
+			,settings.cssFocusBoxBottom
+		]
+		for(var i=0,len=arr.length; i<len; i++){
+			self.removeClass(focusBoxEl,arr[i]);
+		}
 	}
 	
 	,cleanUp = function()
@@ -778,7 +826,7 @@ uiGlide.prototype.documentOutterRect = function()
 		width:width
 		,height:height
 		,left:0
-		,right:0
+		,top:0
 	}
 }
 uiGlide.prototype.getElementRect = function( el ) 
