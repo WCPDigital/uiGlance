@@ -53,12 +53,14 @@ function uiGlide( args )
 		,padding:10
 		,borderWidth:2
 		,documentPadding:20
+		,passthrough:true
 
 		,dataUISet:"data-uigset"
 		,dataUIStep:"data-uigstep"
 		,dataUITitle:"data-uigtitle"
 		,dataUIDesc:"data-uigdesc"
 		,dataUIHtml:"data-uightml"
+		,dataUIPassthrough:"data-uigpassthrough"
 		
 		,cssLeftBox:"uig-box uig-box-left"
 		,cssRightBox:"uig-box uig-box-right"
@@ -168,6 +170,19 @@ function uiGlide( args )
 		}
 		else{
 			focusContentEl.style.display = "none";
+		}
+		
+		// Toggle passthrough pointer events
+		if( currentStep.passthrough ){
+			focusBoxEl.style.pointerEvents = "none";
+			
+			prevBtnEl.style.pointerEvents = "auto";
+			nextBtnEl.style.pointerEvents = "auto";
+			closeBtnEl.style.pointerEvents = "auto";
+		}
+		
+		else{
+			focusBoxEl.style.pointerEvents = "auto";
 		}
 		
 		// Toggle Prev/Next Buttons
@@ -554,13 +569,14 @@ function uiGlide( args )
 		
 		// Travers the DOM and find all UI Steps
 		var stepEls = self.getElementByAttrValue( settings.dataUIStep, null, settings.parent);
-		for(var i = 0, len = stepEls.length, index = 0, set = null, title = "", desc = "", html = ""; i<len; i++){
+		for(var i = 0, len = stepEls.length, index = 0, set = null, title = "", desc = "", html = "", passthrough = null; i<len; i++){
 		
 			index = parseInt( self.getAttr( stepEls[i], settings.dataUIStep ), 10);
 			set = self.getAttr( stepEls[i], settings.dataUISet ) || settings.defaultSet;
 			title = self.getAttr( stepEls[i], settings.dataUITitle );
 			desc = self.getAttr( stepEls[i], settings.dataUIDesc );
 			html = self.getAttr( stepEls[i], settings.dataUIHtml );
+			passthrough = self.getAttr( stepEls[i], settings.dataUIPassthrough ) || settings.passthrough;
 
 			steps.push( {
 				index:index
@@ -569,6 +585,7 @@ function uiGlide( args )
 				,title:title
 				,desc:desc
 				,html:html
+				,passthrough:passthrough
 				,onBeforeStep:null
 				,onAfterStep:null
 				,onStep:null
@@ -585,6 +602,9 @@ function uiGlide( args )
 			arr.index = i;
 			if( !arr.set ){
 				arr.set = settings.defaultSet
+			}
+			if( arr.passthrough === undefined || arr.passthrough === null ){
+				arr.passthrough = settings.passthrough
 			}
 		}
 		return arr;
@@ -802,15 +822,6 @@ uiGlide.prototype.scrollOffset = function( el )
 		top:top
 	}
 }
-uiGlide.prototype.getScrollingElement = function() 
-{
-  var d = this.document;
-
-  return  d.documentElement.scrollHeight > d.body.scrollHeight &&
-		  d.compatMode.indexOf("CSS1") == 0 ?
-		  d.documentElement :
-		  d.body;
-}
 uiGlide.prototype.documentOutterRect = function() 
 {
 	var body = this.document.body, 
@@ -1022,21 +1033,29 @@ uiGlide.prototype.normaliseEvent = function( e )
 }
 uiGlide.prototype.scrollTo = function( el, endLeft, endTop, speed )
 {	
-	var self = this;
+	var self = this,
+		d = self.document;
 	
 	speed = speed || 0;
 
-	if( !el || el == this.document.body || el == this.document.documentElement ){
-		el = self.getScrollingElement();
-	}
-	
 	var scrollStart = self.scrollOffset( el );
 	var deltaLeft = (endLeft||0) - scrollStart.left;
 	var deltaTop = (endTop||0) - scrollStart.top;
 	
 	this.animate(function( pcnt ){
-		el.scrollLeft = scrollStart.left + (deltaLeft*pcnt);
-		el.scrollTop = scrollStart.top + (deltaTop*pcnt);
+		
+		if( !el || el == d.body || el == d.documentElement ){
+			d.body.scrollLeft = scrollStart.left + (deltaLeft*pcnt);
+			d.body.scrollTop = scrollStart.top + (deltaTop*pcnt);
+			
+			d.documentElement.scrollLeft = scrollStart.left + (deltaLeft*pcnt);
+			d.documentElement.scrollTop = scrollStart.top + (deltaTop*pcnt);
+		}
+		else{
+			el.scrollLeft = scrollStart.left + (deltaLeft*pcnt);
+			el.scrollTop = scrollStart.top + (deltaTop*pcnt);
+		}
+
 	}, speed );
 }
 uiGlide.prototype.animate = function( callback, duration, onComplete )
