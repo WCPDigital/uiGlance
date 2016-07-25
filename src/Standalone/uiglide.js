@@ -45,9 +45,9 @@ function uiGlide( args )
 		,steps:[]
 		,defaultSet:"uiGlide"
 
-		,transition:0.5
-		,fadeIn:1
-		,fadeOut:0.5
+		,transition:500
+		,fadeIn:1000
+		,fadeOut:500
 		,minWidth:260
 		,minHeight:125
 		,padding:10
@@ -89,8 +89,142 @@ function uiGlide( args )
 		,onAfterClose:null
 		,onBeforeGoto:null
 		,onAfterGoto:null
+		,onBeforeStep:null
+		,onAfterStep:null
+		,onStep:null
 	}
 
+	,isTouchDevice = function() 
+	{
+		return "ontouchstart" in window || navigator.maxTouchPoints;
+	}
+	
+	,lerp = function( a, b, pcnt )
+	{
+		return a + pcnt * (b - a);
+	}
+	
+	,opacity = function( el, opacity )
+	{
+		// Normal Browsers
+		el.style.opacity = opacity;
+
+		// IE
+		var pct = opacity*100;
+		el.style.filter = "alpha(opacity="+pct+")";
+	}
+	
+	,scrollTo = function( el, endLeft, endTop, speed )
+	{	
+		var d = self.document;
+		
+		speed = speed || 0;
+
+		var scrollStart = scrollOffset( el );
+		var deltaLeft = (endLeft||0) - scrollStart.left;
+		var deltaTop = (endTop||0) - scrollStart.top;
+		
+		animate(function( pcnt ){
+			
+			if( !el || el == d.body || el == d.documentElement ){
+				d.body.scrollLeft = scrollStart.left + (deltaLeft*pcnt);
+				d.body.scrollTop = scrollStart.top + (deltaTop*pcnt);
+				
+				d.documentElement.scrollLeft = scrollStart.left + (deltaLeft*pcnt);
+				d.documentElement.scrollTop = scrollStart.top + (deltaTop*pcnt);
+			}
+			else{
+				el.scrollLeft = scrollStart.left + (deltaLeft*pcnt);
+				el.scrollTop = scrollStart.top + (deltaTop*pcnt);
+			}
+
+		}, speed );
+	}
+	
+	,animate = function( callback, duration, onComplete )
+	{	
+		var fps = 60, delta = 0, lastCalledTime = Date.now();
+		var resolution = (1000/fps), endtime = duration, percent = 0, counter = 0, interval = setInterval( function(){
+			
+			percent = (counter/endtime);
+			if( percent >= 1){
+				callback( 1 );
+				clearInterval( interval );
+				return onComplete && onComplete();
+			}
+			callback( percent );
+			
+			delta = Math.floor(1/((Date.now() - lastCalledTime)*0.001));
+			lastCalledTime = Date.now();
+			counter += (resolution*(fps/delta));
+			
+		}, resolution );
+	}
+
+	,scrollOffset = function( el ) 
+	{
+		var left = 0, top = 0;
+		
+		// Get the elements scroll position
+		// Ignoring if it's the document or body
+		if( el && el !== self.document.body && el !== self.document.documentElement ){
+			left = el.scrollLeft; 
+			top = el.scrollTop;
+		}
+		
+		// Get document scroll position
+		else{
+			left = (self.window.scrollX  || self.window.pageXOffset || self.document.documentElement.scrollLeft); 
+			top = (self.window.scrollY  || self.window.pageYOffset || self.document.documentElement.scrollTop);
+		}
+		
+		return{
+			left:left,
+			top:top
+		}
+	}
+	
+	,documentOutterRect = function() 
+	{
+		var body = self.document.body, 
+			html = self.document.documentElement;
+
+		var width = Math.max( body.scrollWidth, body.offsetWidth, 
+						   html.clientWidth, html.scrollWidth, html.offsetWidth );
+
+		var height = Math.max( body.scrollHeight, body.offsetHeight, 
+						   html.clientHeight, html.scrollHeight, html.offsetHeight );
+
+		return{
+			width:width
+			,height:height
+			,left:0
+			,top:0
+		}
+	}
+	
+	,getElementRect = function( el ) 
+	{
+		var bounds = el.getBoundingClientRect(),
+			left = bounds.left + (self.window.scrollX  || self.window.pageXOffset || self.document.documentElement.scrollLeft),
+			top = bounds.top + (self.window.scrollY  || self.window.pageYOffset || self.document.documentElement.scrollTop),
+			width = (bounds.right - bounds.left),
+			height = (bounds.bottom - bounds.top),
+			centerLeft = (left + (width*0.5)),
+			centerTop = (top + (height*0.5));
+		
+		return { 
+			left:left, 
+			top:top,
+			width:width,
+			height:height,
+			center:{
+				left:centerLeft,
+				top:centerTop
+			}
+		};
+	}
+	
 	,createBoxElement = function()
 	{
 		var boxEl = self.document.createElement("DIV");
@@ -208,10 +342,10 @@ function uiGlide( args )
 		removePositionalClasses();
 		
 		// Begin Animation
-		self.animate( function( percent ){
+		animate( function( percent ){
 
 			// Get the target object sdimensions
-			var targetRect = self.getElementRect( currentStep.element );
+			var targetRect = getElementRect( currentStep.element );
 
 			var endWidth = Math.max(targetRect.width, settings.minWidth) + (settings.padding*2);
 			var endHeight = Math.max(targetRect.height, settings.minHeight) + (settings.padding*2);
@@ -219,7 +353,7 @@ function uiGlide( args )
 			var endTop = targetRect.center.top - (endHeight*0.5);
 
 			// Use the doc height to ensure we don't go outside the screen
-			var docRect = self.documentOutterRect();
+			var docRect = documentOutterRect();
 			
 			// Test for body overflow, adjust as best as we can.
 			var boundsLeft = (docRect.left+settings.documentPadding)
@@ -241,10 +375,10 @@ function uiGlide( args )
 				endTop -= ((endTop+endHeight) - boundsBottom);
 			}
 
-			var w = self.lerp(startWidth,endWidth,percent);
-			var h = self.lerp(startHeight,endHeight,percent); 
-	 		var x = self.lerp(startLeft,endLeft,percent); 
-			var y = self.lerp(startTop,endTop,percent); 
+			var w = lerp(startWidth,endWidth,percent);
+			var h = lerp(startHeight,endHeight,percent); 
+	 		var x = lerp(startLeft,endLeft,percent); 
+			var y = lerp(startTop,endTop,percent); 
 
 			updateFocusBox(x,y,w,h);
 
@@ -261,7 +395,7 @@ function uiGlide( args )
 		});
 					
 		// Scroll page to the step element and focus box
-		self.scrollTo(
+		scrollTo(
 			settings.parent
 			,(currentStep.element.offsetLeft - settings.documentPadding)
 			,(currentStep.element.offsetTop - settings.documentPadding)
@@ -277,7 +411,7 @@ function uiGlide( args )
 		var focusTop = y;
 		
 		// Use the doc height to ensure we fill the entire screen
-		var docRect = self.documentOutterRect();
+		var docRect = documentOutterRect();
 
 		focusBoxEl.style.width = Math.max( (focusWidth-(settings.borderWidth*2)),0)+"px";
 		focusBoxEl.style.height = Math.max( (focusHeight-(settings.borderWidth*2)),0)+"px";
@@ -314,8 +448,8 @@ function uiGlide( args )
 	,addPositionalClasses = function()
 	{
 			// Get the target object sdimensions
-		var focusRect = self.getElementRect( focusBoxEl );
-		var docRect = self.documentOutterRect();
+		var focusRect = getElementRect( focusBoxEl );
+		var docRect = documentOutterRect();
 		var topDelta = (focusRect.top-docRect.top)
 			,bottomDelta = (docRect.top+docRect.height) - (focusRect.top+focusRect.height) 
 			,leftDelta = (focusRect.left-docRect.left) 
@@ -365,7 +499,7 @@ function uiGlide( args )
 		self.removeEvent( closeBtnEl, "touchstart", _onCloseClick ); 
 		
 		// Remove close event when not a touch device
-		if( !self.isTouchDevice() ){
+		if( !isTouchDevice() ){
 			var closeEls = [
 				leftBoxEl
 				,rightBoxEl
@@ -406,17 +540,17 @@ function uiGlide( args )
 			settings.onBeforeClose( self );
 		
 		// Fade-out the elements
-		var fadeeEls = [
+		var fadeEls = [
 			focusBoxEl
 			,leftBoxEl
 			,rightBoxEl
 			,topBoxEl
 			,bottomBoxEl
 		];
-		self.animate(function( pcnt ){
+		animate(function( pcnt ){
 			pcnt = (1-pcnt);
-			for(var i=(fadeeEls.length-1); i>=0; i-- ){
-				self.opacity(fadeeEls[i],pcnt );
+			for(var i=(fadeEls.length-1); i>=0; i-- ){
+				opacity(fadeEls[i],pcnt );
 			}
 		}, settings.fadeOut, cleanUp );
 
@@ -501,7 +635,7 @@ function uiGlide( args )
 		settings.parent.appendChild( bottomBoxEl )
 				
 		// Add close event when not a touch device
-		if( !self.isTouchDevice() ){
+		if( !isTouchDevice() ){
 			var closeEls = [
 				leftBoxEl
 				,rightBoxEl
@@ -519,7 +653,7 @@ function uiGlide( args )
 		self.addEvent( self.window, "resize", _onWindowResize );
 		
 		// Starting position
-		var docRect = self.documentOutterRect();
+		var docRect = documentOutterRect();
 		var w = 200
 			,h = 200
 			,x = ((docRect.width*0.5)-w)
@@ -535,8 +669,8 @@ function uiGlide( args )
 		buildUI();
 		
 		// Fade-in the element
-		self.animate(function( pcnt ){
-			self.opacity(focusBoxEl,pcnt);
+		animate(function( pcnt ){
+			opacity(focusBoxEl,pcnt);
 		}, settings.fadeIn);
 		
 		var els = [
@@ -547,9 +681,9 @@ function uiGlide( args )
 		];
 			
 		// Fade-in the element
-		self.animate(function( pcnt ){
+		animate(function( pcnt ){
 			for(var i=(els.length-1); i>=0; i-- ){
-				self.opacity(els[i],pcnt);
+				opacity(els[i],pcnt);
 			}
 		}, (settings.fadeIn*1.5) );
 
@@ -572,23 +706,23 @@ function uiGlide( args )
 		for(var i = 0, len = stepEls.length, index = 0, set = null, title = "", desc = "", html = "", passthrough = null; i<len; i++){
 		
 			index = parseInt( self.getAttr( stepEls[i], settings.dataUIStep ), 10);
-			set = self.getAttr( stepEls[i], settings.dataUISet ) || settings.defaultSet;
+			set = self.getAttr( stepEls[i], settings.dataUISet );
 			title = self.getAttr( stepEls[i], settings.dataUITitle );
 			desc = self.getAttr( stepEls[i], settings.dataUIDesc );
 			html = self.getAttr( stepEls[i], settings.dataUIHtml );
-			passthrough = self.getAttr( stepEls[i], settings.dataUIPassthrough ) || settings.passthrough;
+			passthrough = self.getAttr( stepEls[i], settings.dataUIPassthrough );
 
 			steps.push( {
 				index:index
 				,element:stepEls[i]
-				,set:set
+				,set:set || settings.defaultSet
 				,title:title
 				,desc:desc
 				,html:html
-				,passthrough:passthrough
-				,onBeforeStep:null
-				,onAfterStep:null
-				,onStep:null
+				,passthrough:passthrough || settings.passthrough
+				,onBeforeStep:settings.onBeforeStep
+				,onAfterStep:settings.onAfterStep
+				,onStep:settings.onStep
 				,uiGlide:self
 			} );
 		}
@@ -605,6 +739,15 @@ function uiGlide( args )
 			}
 			if( arr.passthrough === undefined || arr.passthrough === null ){
 				arr.passthrough = settings.passthrough
+			}
+			if( !arr.onBeforeStep ){
+				arr.onBeforeStep = settings.onBeforeStep
+			}
+			if( !arr.onAfterStep ){
+				arr.onAfterStep = settings.onAfterStep
+			}
+			if( !arr.onStep ){
+				arr.onStep = settings.onStep
 			}
 		}
 		return arr;
@@ -772,14 +915,6 @@ uiGlide.prototype.constructor = uiGlide;
 * Interface methods
 * These could be replaced by a 3rd Party library. eg. jQuery
 */
-uiGlide.prototype.lerp = function( a, b, pcnt )
-{
-	return a + pcnt * (b - a);
-}
-uiGlide.prototype.isTouchDevice = function() 
-{
-	return "ontouchstart" in window || navigator.maxTouchPoints;
-}
 uiGlide.prototype.arrayClean = function( arr )
 {
 	var nArr = [];
@@ -799,67 +934,6 @@ uiGlide.prototype.wash = function( a, b )
 		}
 	}
 	return a;
-}
-uiGlide.prototype.scrollOffset = function( el ) 
-{
-	var left = 0, top = 0;
-	
-	// Get the elements scroll position
-	// Ignoring if it's the document or body
-	if( el && el !== this.document.body && el !== this.document.documentElement ){
-		left = el.scrollLeft; 
-		top = el.scrollTop;
-	}
-	
-	// Get document scroll position
-	else{
-		left = (this.window.scrollX  || this.window.pageXOffset || this.document.documentElement.scrollLeft); 
-		top = (this.window.scrollY  || this.window.pageYOffset || this.document.documentElement.scrollTop);
-	}
-	
-	return{
-		left:left,
-		top:top
-	}
-}
-uiGlide.prototype.documentOutterRect = function() 
-{
-	var body = this.document.body, 
-		html = this.document.documentElement;
-
-	var width = Math.max( body.scrollWidth, body.offsetWidth, 
-					   html.clientWidth, html.scrollWidth, html.offsetWidth );
-
-	var height = Math.max( body.scrollHeight, body.offsetHeight, 
-					   html.clientHeight, html.scrollHeight, html.offsetHeight );
-
-	return{
-		width:width
-		,height:height
-		,left:0
-		,top:0
-	}
-}
-uiGlide.prototype.getElementRect = function( el ) 
-{
-	var bounds = el.getBoundingClientRect(),
-		left = bounds.left + (this.window.scrollX  || this.window.pageXOffset || this.document.documentElement.scrollLeft),
-		top = bounds.top + (this.window.scrollY  || this.window.pageYOffset || this.document.documentElement.scrollTop),
-		width = (bounds.right - bounds.left),
-		height = (bounds.bottom - bounds.top),
-		centerLeft = (left + (width*0.5)),
-		centerTop = (top + (height*0.5));
-	
-	return { 
-		left:left, 
-		top:top,
-		width:width,
-		height:height,
-		center:{
-			left:centerLeft,
-			top:centerTop
-		}
-	};
 }
 uiGlide.prototype.removeElement = function( el )
 {
@@ -1030,61 +1104,6 @@ uiGlide.prototype.normaliseEvent = function( e )
 		};
 	}
 	return null;
-}
-uiGlide.prototype.scrollTo = function( el, endLeft, endTop, speed )
-{	
-	var self = this,
-		d = self.document;
-	
-	speed = speed || 0;
-
-	var scrollStart = self.scrollOffset( el );
-	var deltaLeft = (endLeft||0) - scrollStart.left;
-	var deltaTop = (endTop||0) - scrollStart.top;
-	
-	this.animate(function( pcnt ){
-		
-		if( !el || el == d.body || el == d.documentElement ){
-			d.body.scrollLeft = scrollStart.left + (deltaLeft*pcnt);
-			d.body.scrollTop = scrollStart.top + (deltaTop*pcnt);
-			
-			d.documentElement.scrollLeft = scrollStart.left + (deltaLeft*pcnt);
-			d.documentElement.scrollTop = scrollStart.top + (deltaTop*pcnt);
-		}
-		else{
-			el.scrollLeft = scrollStart.left + (deltaLeft*pcnt);
-			el.scrollTop = scrollStart.top + (deltaTop*pcnt);
-		}
-
-	}, speed );
-}
-uiGlide.prototype.animate = function( callback, duration, onComplete )
-{	
-	var fps = 60, delta = 0, lastCalledTime = Date.now();
-	var resolution = (1000/fps), endtime = (duration*1000), percent = 0, counter = 0, interval = setInterval( function(){
-		
-		percent = (counter/endtime);
-		if( percent >= 1){
-			callback( 1 );
-			clearInterval( interval );
-			return onComplete && onComplete();
-		}
-		callback( percent );
-		
-		delta = Math.floor(1/((Date.now() - lastCalledTime)*0.001));
-		lastCalledTime = Date.now();
-		counter += (resolution*(fps/delta));
-		
-	}, resolution );
-}
-uiGlide.prototype.opacity = function( el, opacity )
-{
-	// Normal Browsers
-	el.style.opacity = opacity;
-
-	// IE
-	var pct = opacity*100;
-	el.style.filter = "alpha(opacity="+pct+")";
 }
 
 /**
