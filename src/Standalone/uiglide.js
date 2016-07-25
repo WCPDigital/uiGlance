@@ -52,7 +52,7 @@ function uiGlide( args )
 		,minHeight:125
 		,padding:10
 		,borderWidth:2
-		,documentPadding:15
+		,documentPadding:20
 
 		,dataUISet:"data-uigset"
 		,dataUIStep:"data-uigstep"
@@ -238,8 +238,8 @@ function uiGlide( args )
 		// Scroll page to the step element and focus box
 		self.scrollTo(
 			settings.parent
-			,currentStep.element.offsetLeft
-			,currentStep.element.offsetTop
+			,(currentStep.element.offsetLeft - settings.documentPadding)
+			,(currentStep.element.offsetTop - settings.documentPadding)
 			,settings.transition
 		);
 	}
@@ -757,8 +757,9 @@ uiGlide.prototype.scrollOffset = function( el )
 uiGlide.prototype.getScrollingElement = function() 
 {
   var d = this.document;
+
   return  d.documentElement.scrollHeight > d.body.scrollHeight &&
-		  d.compatMode.indexOf('CSS1') == 0 ?
+		  d.compatMode.indexOf("CSS1") == 0 ?
 		  d.documentElement :
 		  d.body;
 }
@@ -976,8 +977,8 @@ uiGlide.prototype.scrollTo = function( el, endLeft, endTop, speed )
 	var self = this;
 	
 	speed = speed || 0;
-	
-	if( !el || el == this.document.body || el === this.document.documentElement ){
+
+	if( !el || el == this.document.body || el == this.document.documentElement ){
 		el = self.getScrollingElement();
 	}
 	

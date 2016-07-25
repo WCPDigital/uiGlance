@@ -12,7 +12,7 @@
         <script src="../../src/3rdparty/modernizr-2.8.3-respond-1.4.2.min.js"></script>
         <script src="js/main.js"></script>
 		
-        <link rel="stylesheet" href="../../css/uiglide.default.css">
+        <link href="../../css/uiglide.default.css" rel="stylesheet">
         <script src="../../src/Standalone/uiglide.min.js"></script>
     </head>
     <body>
@@ -97,7 +97,15 @@
 						console.log("Before Step");
 					}
 					,onStep:function(ui){
-						console.log("On Step");
+					
+						var stepIdx = ui.getCurrentStepIndex();
+						var step = ui.getCurrentStep();
+						var stepTitle = step.title;
+						var stepDesc = step.desc;
+						var stepSet = step.set;
+						var stepEl = step.element;
+	
+						console.log("On Step. Set: '"+stepSet+"', Index: '"+stepIdx+"', title: '"+stepTitle+"'" );
 					}
 					,onAfterStep:function(ui){
 						console.log("After Step");
