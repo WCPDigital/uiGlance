@@ -207,16 +207,18 @@ function uiGlide( args )
 			var docRect = self.documentOutterRect();
 			
 			// Test for body overflow, adjust as best as we can.
-			var boundsLeft = (docRect.left+self.documentPadding)
-				,boundsRight = (docRect.left+docRect.width-self.documentPadding)
-				,boundsTop = (docRect.top+self.documentPadding)
-				,boundsBottom = (docRect.top+docRect.height-self.documentPadding);
+			var boundsLeft = (docRect.left+settings.documentPadding)
+				,boundsRight = (docRect.left+docRect.width-settings.documentPadding)
+				,boundsTop = (docRect.top+settings.documentPadding)
+				,boundsBottom = (docRect.top+docRect.height-settings.documentPadding);
+				
 			if( boundsLeft > endLeft ){
 				endLeft = boundsLeft;
 			}
 			else if( boundsRight < (endLeft+endWidth) ){
 				endLeft -= ((endLeft+endWidth) - boundsRight);
 			}
+
 			if( boundsTop > endTop ){
 				endTop = boundsTop;
 			}
@@ -262,33 +264,33 @@ function uiGlide( args )
 		// Use the doc height to ensure we fill the entire screen
 		var docRect = self.documentOutterRect();
 
-		focusBoxEl.style.width = Math.abs(focusWidth-(settings.borderWidth*2))+"px";
-		focusBoxEl.style.height = Math.abs(focusHeight-(settings.borderWidth*2))+"px";
+		focusBoxEl.style.width = Math.max( (focusWidth-(settings.borderWidth*2)),0)+"px";
+		focusBoxEl.style.height = Math.max( (focusHeight-(settings.borderWidth*2)),0)+"px";
 		focusBoxEl.style.left = focusLeft+"px";
 		focusBoxEl.style.top = focusTop+"px";
 		focusBoxEl.style.borderWidth = settings.borderWidth+"px";
 		
-		leftBoxEl.style.width = focusLeft+"px";
-		leftBoxEl.style.height = docRect.height+"px";
+		leftBoxEl.style.width = Math.max(focusLeft,0)+"px";
+		leftBoxEl.style.height = Math.max(docRect.height,0)+"px";
 		leftBoxEl.style.left = "0px";
 		leftBoxEl.style.top = "0px";
 		leftBoxEl.style.bottom = "auto";
 
 		rightBoxEl.style.width = "auto";
-		rightBoxEl.style.height = docRect.height+"px";
+		rightBoxEl.style.height = Math.max(docRect.height,0)+"px";
 		rightBoxEl.style.left = (focusLeft+focusWidth)+"px";
 		rightBoxEl.style.right = "0px";
 		rightBoxEl.style.top = "0px";
 		rightBoxEl.style.bottom = "auto";
 		
-		topBoxEl.style.width = focusWidth+"px";
-		topBoxEl.style.height = focusTop+"px";
+		topBoxEl.style.width = Math.max(focusWidth,0)+"px";
+		topBoxEl.style.height = Math.max(focusTop,0)+"px";
 		topBoxEl.style.left = focusLeft+"px";
 		topBoxEl.style.top = "0px";
 		topBoxEl.style.bottom = "auto";
 		
-		bottomBoxEl.style.width = focusWidth+"px";
-		bottomBoxEl.style.height = Math.abs(docRect.height - (focusTop+focusHeight))+"px";
+		bottomBoxEl.style.width = Math.max(focusWidth,0)+"px";
+		bottomBoxEl.style.height = Math.max( (docRect.height - (focusTop+focusHeight)),0)+"px";
 		bottomBoxEl.style.left = focusLeft+"px";
 		bottomBoxEl.style.top = (focusTop+focusHeight)+"px";
 		bottomBoxEl.style.bottom = "auto";
@@ -303,16 +305,14 @@ function uiGlide( args )
 			,bottomDelta = (docRect.top+docRect.height) - (focusRect.top+focusRect.height) 
 			,leftDelta = (focusRect.left-docRect.left) 
 			,rightDelta = (docRect.left+docRect.width) - (focusRect.left+focusRect.width);
-			
-			console.log(topDelta+", "+bottomDelta);
+
 		if( topDelta <= bottomDelta){
 			self.addClass(focusBoxEl,settings.cssFocusBoxTop);
 		}
 		else{
 			self.addClass(focusBoxEl,settings.cssFocusBoxBottom);
 		}
-			
-			console.log(leftDelta+", "+rightDelta);
+
 		if( leftDelta <= rightDelta){
 			self.addClass(focusBoxEl,settings.cssFocusBoxLeft);
 		}
@@ -1066,4 +1066,15 @@ uiGlide.prototype.opacity = function( el, opacity )
 	// IE
 	var pct = opacity*100;
 	el.style.filter = "alpha(opacity="+pct+")";
+}
+
+/**
+* String.trim for Older Browsers
+*/
+if( !String.prototype.trim ) 
+{
+	String.prototype.trim = function() 
+	{
+		return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
+	}
 }
