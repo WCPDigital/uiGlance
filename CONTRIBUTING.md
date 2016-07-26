@@ -15,3 +15,6 @@ We'll figure this out later... In the meantime, maybe just report any ideas/prop
 
 Please report documentation issues at the [jQuery uiGlide](https://github.com/WCPDigital/uiGlide/issues) issue tracker.
 
+## License
+Copyright &copy; WCP Digital &amp; Patrick Purcell<br>
+Licensed under the [MIT license](http://www.opensource.org/licenses/mit-license.php).
