@@ -1,4 +1,4 @@
-[uiSlide jQuery Plugin](http://uislide.com/) - An easy way to guide and help your users
+[uiGlide jQuery Plugin](http://uiglide.com/) - An easy way to guide your users
 ================================
 
 A cross-browser, mobile-responsive JavaScript and jQuery plugin for user interface (UI) guides, interactive application help and workflow demonstrations.
@@ -7,22 +7,33 @@ A cross-browser, mobile-responsive JavaScript and jQuery plugin for user interfa
 
 ### Downloading the prebuilt files
 
-Prebuilt files can be downloaded from http://uiglide.com
+Prebuilt files, themes and examples can be downloaded from http://uiglide.com
 
 ### Including it on your page
 
-Include jQuery, the uiSlide plugin and CSS theme file on a page. Then select a form to validate and call the `validate` method.
+Include jQuery, the uiGlide plugin and CSS theme file on a page. Then apply a few simple "data-" attributes to the areas on your page that you want to highlight or explain. Once ready, initialise the guide by calling the `uiGlide` method, followed by the `open` method.
 
 ```html
+<head>
+	<link href="uiglide.default.css" rel="stylesheet">
+</head>
 <body>
 	<div data-uigstep="0" data-uigtitle="My title" data-uigdesc="My description" data-uightml="<p>Custom inner HTML content</p>">
 	...
 	</div>
 </body>
 <script src="jquery.js"></script>
-<script src="jquery.uislide.js"></script>
+<script src="jquery.uiglide.js"></script>
 <script>
-$("body").uiSlide();
+var uig = $("body").uiGlide().open();
+</script>
+```
+Alternatively, if you don't use jQuery or want to incorporate uiGlide into your choice of library, you can use the `Standalone` version (which is almost the same in every way).
+
+```html
+<script src="uiglide.js"></script>
+<script>
+var uig = new uiGlide().open();
 </script>
 ```
 

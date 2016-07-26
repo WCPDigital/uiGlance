@@ -67,8 +67,7 @@
 		<script>
 		"use strict";
 		var uig = new uiGlide({
-			parent:null //document.getElementById("main")
-			,onBeforeOpen:function(ui){
+			onBeforeOpen:function(ui){
 				console.log("Before Open");
 			}
 			,onAfterOpen:function(ui){
@@ -124,8 +123,7 @@
 					}
 				}
 			]
-		});
-		uig.open();//.goto(3).stop().open('help',3);
+		}).open();
 		</script>
     </body>
 </html>
