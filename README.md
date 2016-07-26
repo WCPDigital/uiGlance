@@ -24,7 +24,7 @@ Prebuilt files, themes and examples can be downloaded from http://uiglide.com
 
 ### Including it on your page
 
-Include jQuery, the uiGlide plugin and CSS theme file on a page. Then apply a few simple "data-" attributes to the areas on your page that you want to highlight or explain. Once ready, initialise the guide by calling the `uiGlide` method, followed by the `open` method.
+Include jQuery, the uiGlide plugin and a CSS theme file on a page. Then apply a few simple "data-" attributes to the elements on your page that you want to highlight or explain. Once ready, initialise the guide by calling the `uiGlide` method, followed by the `open` method.
 
 ```html
 <head>
@@ -51,7 +51,33 @@ var uig = new uiGlide().open();
 </script>
 ```
 
-For more information on how to setup a rules and customizations, [check the documentation](http://uiglide.com/documentation/).
+It's also entirely possible to configure uiGlide using JavaScript notation.
+```js
+var uig = new uiGlide( {
+	onBeforeOpen:function(ui){
+		console.log("Before Open");
+	}
+	,onAfterClose:function(ui){
+		console.log("After Close");
+	}
+	,steps:[
+		index:0
+		,set:"help"
+		,title:"Welcome to uiGlide"
+		,desc:"uiGlide helps you communicate with your audience."
+		,html:"<p>Custom inner HTML content</p>"
+		,onStep:function(ui){
+			var stepIdx = ui.getCurrentStepIndex();
+			var step = ui.getCurrentStep();
+			var stepTitle = step.title;
+			var stepSet = step.set;
+			console.log("On Step. Set: '"+stepSet+"', Index: '"+stepIdx+"', title: '"+stepTitle+"'" );
+		}
+	]
+} ).open();
+```
+
+For more information on how to setup a callbacks, overrides and customizations, [check the documentation](http://uiglide.com/documentation/).
 
 ## Reporting issues and contributing code
 
