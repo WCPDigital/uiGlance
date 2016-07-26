@@ -61,7 +61,8 @@ var uig = new uiGlide( {
 		console.log("After Close");
 	}
 	,steps:[
-		index:0
+		element:document.getElementById("myDOMElementId")
+		,index:0
 		,set:"help"
 		,title:"Welcome to uiGlide"
 		,desc:"uiGlide helps you communicate with your audience."
