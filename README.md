@@ -24,7 +24,8 @@ Include jQuery, the uiGlide plugin and CSS theme file on a page. Then apply a fe
 	<link href="uiglide.default.css" rel="stylesheet">
 </head>
 <body>
-	<div data-uigstep="0" data-uigtitle="My title" data-uigdesc="My description" data-uightml="<p>Custom inner HTML content</p>">
+	<div data-uigset="demo_set" data-uigstep="0" data-uigtitle="My title" 
+		data-uigdesc="My description" data-uightml="<p>Custom inner HTML content</p>">
 	...
 	</div>
 </body>
