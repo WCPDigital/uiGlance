@@ -762,7 +762,7 @@
 			updateFocusBox(x,y,w,h);
 		}
 		
-		,open = function( setName, stepNum )
+		,open = function( stepNum, setName )
 		{
 			if( isClosing ){
 				throw new Error("uiGlide: Tried to open before completing the close.");

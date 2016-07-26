@@ -4,8 +4,224 @@
 		<title></title>
 	</head>
 	<body>
+		<h2>Attributes</h2>
+		<table width="800">
+			<thead>
+				<tr>
+					<th>
+						Attribute
+					</th>
+					<th>
+						Type
+					</th>
+					<th>
+						Description
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						data-uigset
+					</td>
+					<td>
+						string
+					</td>
+					<td>
+						Create the dynamic DOM Elements and initialise the step sequence.
+					</td>
+				</tr>
+			</tbody>
+		</table>
 		
-		<h3>Settings</h3>
+		
+		<h2>Methods</h2>
+		<table width="800">
+			<thead>
+				<tr>
+					<th>
+						Method
+					</th>
+					<th>
+						Return
+					</th>
+					<th>
+						Description
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						open( stepNum, setName )
+					</td>
+					<td>
+						this
+					</td>
+					<td>
+						Create the dynamic DOM Elements and initialise the step sequence.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						close()
+					</td>
+					<td>
+						this
+					</td>
+					<td>
+						Complete the Step sequence and remove the dynamics DOM Elements.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						next()
+					</td>
+					<td>
+						this
+					</td>
+					<td>
+						Tween the display from the current step, through to the next step.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						prev()
+					</td>
+					<td>
+						this
+					</td>
+					<td>
+						Tween the display from the current step, back to the previous step.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						goto( stepNum )
+					</td>
+					<td>
+						this
+					</td>
+					<td>
+						Tween the display from the current step to another step in the currently loaded set.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						stop()
+					</td>
+					<td>
+						this
+					</td>
+					<td>
+						Instantly freeze the current tween. Stop can, and will, leave the focus box in whatever stage it was when the method was triggered.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						getFocusBox()
+					</td>
+					<td>
+						DOM Element
+					</td>
+					<td>
+						Retrieve the DOM Element used as the focus box.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						getSettings()
+					</td>
+					<td>
+						object
+					</td>
+					<td>
+						Retrieve the settings object.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						getSteps()
+					</td>
+					<td>
+						array
+					</td>
+					<td>
+						Retrieve an array of the currently loaded steps.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						getStep( idx )
+					</td>
+					<td>
+						object
+					</td>
+					<td>
+						Retrieve a step by it's position in the current set array.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						getCurrentSet()
+					</td>
+					<td>
+						array
+					</td>
+					<td>
+						Retrieve the currently loaded set array.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						getCurrentSetName()
+					</td>
+					<td>
+						string
+					</td>
+					<td>
+						Retrieve the currently loaded set's name.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						getCurrentStep()
+					</td>
+					<td>
+						object
+					</td>
+					<td>
+						Retrieve the currently loaded step.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						getCurrentStepIndex()
+					</td>
+					<td>
+						integer
+					</td>
+					<td>
+						Retrieve the currently loaded step's index.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						getVersion()
+					</td>
+					<td>
+						string
+					</td>
+					<td>
+						A value that can be used to validate the uiSlide 
+						version identifier.
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		
+		<h2>Settings</h2>
 		<table width="800">
 			<thead>
 				<tr>
@@ -447,10 +663,117 @@
 						The default html content used to generate uiGlide's dynamic elements.
 					</td>
 				</tr>
+
+				<tr>
+					<td>
+						onBeforeOpen
+					</td>
+					<td>
+						null
+					</td>
+					<td>
+						Callback method that will be executed before the "Open" process begins.
+					</td>
+				</tr>
 				
+				<tr>
+					<td>
+						onAfterOpen
+					</td>
+					<td>
+						null
+					</td>
+					<td>
+						Callback method that will be executed when the "Open" process ends.
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						onBeforeClose
+					</td>
+					<td>
+						null
+					</td>
+					<td>
+						Callback method that will be executed before the "Close" process begins.
+					</td>
+				</tr>
 				
+				<tr>
+					<td>
+						onAfterClose
+					</td>
+					<td>
+						null
+					</td>
+					<td>
+						Callback method that will be executed when the "Close" process ends.
+					</td>
+				</tr>
 				
+				<tr>
+					<td>
+						onBeforeGoto
+					</td>
+					<td>
+						null
+					</td>
+					<td>
+						Callback method that will be executed before the "Goto" process begins.
+					</td>
+				</tr>
 				
+				<tr>
+					<td>
+						onAfterGoto
+					</td>
+					<td>
+						null
+					</td>
+					<td>
+						Callback method that will be executed when the "Goto" process ends.
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						onBeforeStep
+					</td>
+					<td>
+						null
+					</td>
+					<td>
+						Callback method that will be executed before the "Step" process begins.
+						This callback can be overwritten on a per step basis.
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						onAfterStep
+					</td>
+					<td>
+						null
+					</td>
+					<td>
+						Callback method that will be executed when the "Step" process ends.
+						This callback can be overwritten on a per step basis.
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						onStep
+					</td>
+					<td>
+						null
+					</td>
+					<td>
+						Callback method that will be executed when the "Step" has completed it's tween..
+						This callback can be overwritten on a per step basis.
+					</td>
+				</tr>
 				
 				<tr>
 					<td>
@@ -466,6 +789,41 @@
 			</tbody>
 		</table>
 	
+		<h3>How customise settings</h3>
+		
+		<pre>
+		var uig = $("#main").uiGlide( {
+			parent:document.body
+			,minWidth:100
+			,minWidth:100
+			,padding:5
+			,passthrough:true
+			,onBeforeOpen:function(ui){
+				console.log("Before Open");
+			}
+			,onAfterOpen:function(ui){
+				console.log("After Open");
+			}
+			,onBeforeClose:function(ui){
+				console.log("Before Close");
+			}
+			,onAfterClose:function(ui){
+				console.log("After Close");
+			}
+			,onBeforeGoto:function(ui){
+				console.log("Before Goto");
+			}
+			,onAfterGoto:function(ui){
+				console.log("After Goto");
+			}
+			,onStep:function(ui){
+				var step = ui.getCurrentStep();
+				var stepTitle = step.title;
+				var stepSet = step.set;
+				console.log("On Step. Set: '"+stepSet+"', title: '"+stepTitle+"'" );
+			}
+		} );
+		</pre>
 	
 	</body>
 </html>
