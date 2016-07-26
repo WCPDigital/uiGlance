@@ -61,18 +61,25 @@ var uig = new uiGlide( {
 		console.log("After Close");
 	}
 	,steps:[
-		element:document.getElementById("myDOMElementId")
-		,index:0
-		,set:"demo_set"
-		,title:"Welcome to uiGlide"
-		,desc:"uiGlide helps you communicate with your audience."
-		,html:"<p>Custom inner HTML content</p>"
-		,onStep:function(ui){
-			var stepIdx = ui.getCurrentStepIndex();
-			var step = ui.getCurrentStep();
-			var stepTitle = step.title;
-			var stepSet = step.set;
-			console.log("On Step. Set: '"+stepSet+"', Index: '"+stepIdx+"', title: '"+stepTitle+"'" );
+		{
+			element:document.getElementById("myDOMElementId")
+			,index:0
+			,set:"demo_set"
+			,title:"Welcome to uiGlide"
+			,desc:"uiGlide helps you communicate with your audience."
+			,html:"<p>Custom inner HTML content</p>"
+			,onStep:function(ui){
+				var stepIdx = ui.getCurrentStepIndex();
+				var step = ui.getCurrentStep();
+				var stepTitle = step.title;
+				var stepSet = step.set;
+				console.log("On Step. Set: '"+stepSet+"', Index: '"+stepIdx+"', title: '"+stepTitle+"'" );
+			}
+		}
+		,{
+			element:document.getElementById("myDOMElementId2")
+			,index:1
+			,set:"demo_set"
 		}
 	]
 } ).open();
