@@ -1,9 +1,470 @@
 <!doctype html>
 <html>
 	<head>
+		<title></title>
 	</head>
 	<body>
 		
+		<h3>Settings</h3>
+		<table width="800">
+			<thead>
+				<tr>
+					<th>
+						Property
+					</th>
+					<th>
+						Default
+					</th>
+					<th>
+						Description
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						parent
+					</td>
+					<td>
+						document.body
+					</td>
+					<td>
+						This is the DOM Element that will contain all uiGlide
+						content. The default is &lt;BODY&gt;, but you can
+						contain uiGlide within a &lt;DIV&gt;
+					</td>
+				</tr>
+				<tr>
+					<td>
+						steps
+					</td>
+					<td>
+						[] (empty array)
+					</td>
+					<td>
+						The "steps" array contains custom information relating to
+						each "step" in the executing uiGlide. Steps are configured
+						through the "data-" attributes associated with DOM Elements
+						or by adding values directly to the "steps" array
+					</td>
+				</tr>
+				<tr>
+					<td>
+						defaultSet
+					</td>
+					<td>
+						"uiGlide"
+					</td>
+					<td>
+						"Steps" are always grouped into "Sets" and each set is given a unique name. When uiGlide is open, it will display steps in the order specifed by the active set.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						transition
+					</td>
+					<td>
+						500
+					</td>
+					<td>
+						The number of milliseconds used for tweening between steps.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						fadeIn
+					</td>
+					<td>
+						1000
+					</td>
+					<td>
+						The number of milliseconds used for fading-in the first step after uiSlide has opened.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						fadeOut
+					</td>
+					<td>
+						500
+					</td>
+					<td>
+						The number of milliseconds used for fading-out the current step when uiSlide is closed.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						minWidth
+					</td>
+					<td>
+						220
+					</td>
+					<td>
+						Each Step will be forced to maintain a minimum size when it
+						is displayed.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						minHeight
+					</td>
+					<td>
+						125
+					</td>
+					<td>
+						Each Step will be forced to maintain a minimum size when it
+						is displayed.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						padding
+					</td>
+					<td>
+						10
+					</td>
+					<td>
+						Creates negative space between the content and the uiGlide step border.
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						borderWidth
+					</td>
+					<td>
+						2
+					</td>
+					<td>
+						Creates creates a border around the uiGlide step focus box. This is mostly for aesthetic reasons
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						documentPadding
+					</td>
+					<td>
+						20
+					</td>
+					<td>
+						This will force each uiGlide step to maintain a minimum distance from the borders of the parent element.
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						passthrough
+					</td>
+					<td>
+						true
+					</td>
+					<td>
+						<strong>ALERT!!! This is experimental</strong>
+						<br/>Passthrough allows pointer events to penetrate 
+						the uiStep overlay. This is really helpful for 
+						highlighting forms... However, browser support is not great.
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						dataUISet
+					</td>
+					<td>
+						"data-uigset"
+					</td>
+					<td>
+						The default data attribute used when defining a step.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						dataUIStep
+					</td>
+					<td>
+						"data-uigstep"
+					</td>
+					<td>
+						The default data attribute used when defining a step.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						dataUITitle
+					</td>
+					<td>
+						"data-uigtitle"
+					</td>
+					<td>
+						The default data attribute used when defining a step.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						dataUIDesc
+					</td>
+					<td>
+						"data-uigdesc"
+					</td>
+					<td>
+						The default data attribute used when defining a step.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						dataUIHtml
+					</td>
+					<td>
+						"data-uightml"
+					</td>
+					<td>
+						The default data attribute used when defining a step.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						dataUIPassthrough
+					</td>
+					<td>
+						"data-uigpassthrough"
+					</td>
+					<td>
+						The default data attribute used when defining a step.
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						cssLeftBox
+					</td>
+					<td>
+						"uig-box uig-box-left"
+					</td>
+					<td>
+						The default css classes applied to uiGlide's dynamic elements.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						cssRightBox
+					</td>
+					<td>
+						"uig-box uig-box-right"
+					</td>
+					<td>
+						The default css classes applied to uiGlide's dynamic elements.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						cssTopBox
+					</td>
+					<td>
+						"uig-box uig-box-top"
+					</td>
+					<td>
+						The default css classes applied to uiGlide's dynamic elements.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						cssBottomBox
+					</td>
+					<td>
+						"uig-box uig-box-bottom"
+					</td>
+					<td>
+						The default css classes applied to uiGlide's dynamic elements.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						cssFocusBox
+					</td>
+					<td>
+						"uig-focusbox"
+					</td>
+					<td>
+						The default css classes applied to uiGlide's dynamic elements.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						cssFocusBoxLeft
+					</td>
+					<td>
+						"uig-focusbox-left"
+					</td>
+					<td>
+						The default css classes applied to uiGlide's dynamic elements.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						cssFocusBoxRight
+					</td>
+					<td>
+						"uig-focusbox-right"
+					</td>
+					<td>
+						The default css classes applied to uiGlide's dynamic elements.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						cssFocusBoxTop
+					</td>
+					<td>
+						"uig-focusbox-top"
+					</td>
+					<td>
+						The default css classes applied to uiGlide's dynamic elements.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						cssFocusBoxBottom
+					</td>
+					<td>
+						"uig-focusbox-bottom"
+					</td>
+					<td>
+						The default css classes applied to uiGlide's dynamic elements.
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						cssFocusContent
+					</td>
+					<td>
+						"uig-focus-content"
+					</td>
+					<td>
+						The default css classes applied to uiGlide's dynamic elements.
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						cssTitleBox
+					</td>
+					<td>
+						"uig-titlebox"
+					</td>
+					<td>
+						The default css classes applied to uiGlide's dynamic elements.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						cssDescBox
+					</td>
+					<td>
+						"uig-descbox"
+					</td>
+					<td>
+						The default css classes applied to uiGlide's dynamic elements.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						cssPrevBtn
+					</td>
+					<td>
+						"uig-btn uig-btn-prev"
+					</td>
+					<td>
+						The default css classes applied to uiGlide's dynamic elements.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						cssNextBtn
+					</td>
+					<td>
+						"uig-btn uig-btn-next"
+					</td>
+					<td>
+						The default css classes applied to uiGlide's dynamic elements.
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						cssCloseBtn
+					</td>
+					<td>
+						"uig-btn uig-btn-close"
+					</td>
+					<td>
+						The default css classes applied to uiGlide's dynamic elements.
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						htmlPrevBtn
+					</td>
+					<td>
+						"&lt;a href="javascript:void(0)"&gt;&lt;&lt;/a&gt;"
+					</td>
+					<td>
+						The default html content used to generate uiGlide's dynamic elements.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						htmlNextBtn
+					</td>
+					<td>
+						"&lt;a href="javascript:void(0)"&gt;&gt;&lt;/a&gt;"
+					</td>
+					<td>
+						The default html content used to generate uiGlide's dynamic elements.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						htmlCloseBtn
+					</td>
+					<td>
+						"&lt;a href="javascript:void(0)"&gt;&#10006;&lt;/a&gt;"
+					</td>
+					<td>
+						The default html content used to generate uiGlide's dynamic elements.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						htmlFocusContent
+					</td>
+					<td>
+						"&lt;div&gt;&lt;/div&gt;"
+					</td>
+					<td>
+						The default html content used to generate uiGlide's dynamic elements.
+					</td>
+				</tr>
+				
+				
+				
+				
+				
+				<tr>
+					<td>
+						
+					</td>
+					<td>
+						
+					</td>
+					<td>
+						
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	
 	
 	</body>
