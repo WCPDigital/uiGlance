@@ -4,7 +4,7 @@
 
 1. Make sure the problem you're addressing is reproducible.
 2. Use http://jsbin.com or http://jsfiddle.net to provide a test page.
-3. Indicate what browsers the issue can be reproduced in. **Note: IE Compatibilty mode issues will not be addressed. Make sure you test in a real browser!**
+3. Indicate what browsers the issue can be reproduced in. **Note: We don't really care about IE (6,7,8) compatibility issues**
 4. Report the issue here [jQuery uiGlide](https://github.com/WCPDigital/uiGlide/issues)
 
 ## Contributing code
@@ -18,3 +18,4 @@ Please report documentation issues at the [jQuery uiGlide](https://github.com/WC
 ## License
 Copyright &copy; WCP Digital &amp; Patrick Purcell<br>
 Licensed under the [MIT license](http://www.opensource.org/licenses/mit-license.php).
+<br>**Commercial use?** Go for it! You can include uiGlide in your commercial products.
