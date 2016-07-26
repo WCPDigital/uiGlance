@@ -29,7 +29,7 @@
             </header>
         </div>
 
-        <div class="main-container">
+        <div id="main" class="main-container" style="position:relative;height:600px;overflow:scroll;">
             <div class="main wrapper clearfix">
 
                 <article>
@@ -67,7 +67,8 @@
 		<script>
 		"use strict";
 		var uig = new uiGlide({
-			onBeforeOpen:function(ui){
+			parent:null //document.getElementById("main")
+			,onBeforeOpen:function(ui){
 				console.log("Before Open");
 			}
 			,onAfterOpen:function(ui){
@@ -124,7 +125,7 @@
 				}
 			]
 		});
-		uig.open();
+		uig.open();//.goto(3).stop().open('help',3);
 		</script>
     </body>
 </html>

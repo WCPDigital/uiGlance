@@ -34,7 +34,7 @@
             </header>
         </div>
 
-        <div class="main-container">
+        <div id="main" class="main-container" style="position:relative;height:600px;overflow:scroll;">
             <div class="main wrapper clearfix">
 
                 <article>
@@ -71,7 +71,7 @@
         </div>
 		<script>
 		"use strict";
-		$(document.body).uiGlide({
+		var uig = $("#main").uiGlide({
 			onBeforeOpen:function(ui){
 				console.log("Before Open");
 			}
@@ -129,6 +129,7 @@
 				}
 			]
 		});
+		uig.open();//.goto(3).stop().open('help',3);
 		</script>
     </body>
 </html>

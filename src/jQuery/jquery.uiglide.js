@@ -11,8 +11,8 @@
 "use strict";
 (function( $ ){
 	
-    $.fn.uiGlide = function( args ){
- 
+    function uiGlide( args )
+	{
 		var self = this
 		
 		,version = "1.0.0"
@@ -23,8 +23,11 @@
 		
 		,currentSet = []
 		,currentSetName = ""
-		
-		,isAnimating = false
+
+		,isOpening = false
+		,isClosing = false
+	
+		,animation = null
 		
 		,resizeTimer = null
 		
@@ -50,7 +53,7 @@
 			,transition:500
 			,fadeIn:1000
 			,fadeOut:500
-			,minWidth:260
+			,minWidth:220
 			,minHeight:125
 			,padding:10
 			,borderWidth:2
@@ -95,17 +98,17 @@
 			,onAfterStep:null
 			,onStep:null
 		}
-		
+			
 		,isTouchDevice = function() 
 		{
 			return "ontouchstart" in window || navigator.maxTouchPoints;
 		}
-		
+
 		,lerp = function( a, b, pcnt )
 		{
 			return a + pcnt * (b - a);
 		}
-		
+
 		,opacity = function( el, opacity )
 		{
 			// Normal Browsers
@@ -115,34 +118,7 @@
 			var pct = opacity*100;
 			el.style.filter = "alpha(opacity="+pct+")";
 		}
-		
-		,scrollTo = function( el, endLeft, endTop, speed )
-		{	
-			var d = self.document;
-			
-			speed = speed || 0;
 
-			var scrollStart = scrollOffset( el );
-			var deltaLeft = (endLeft||0) - scrollStart.left;
-			var deltaTop = (endTop||0) - scrollStart.top;
-			
-			animate(function( pcnt ){
-				
-				if( !el || el == d.body || el == d.documentElement ){
-					d.body.scrollLeft = scrollStart.left + (deltaLeft*pcnt);
-					d.body.scrollTop = scrollStart.top + (deltaTop*pcnt);
-					
-					d.documentElement.scrollLeft = scrollStart.left + (deltaLeft*pcnt);
-					d.documentElement.scrollTop = scrollStart.top + (deltaTop*pcnt);
-				}
-				else{
-					el.scrollLeft = scrollStart.left + (deltaLeft*pcnt);
-					el.scrollTop = scrollStart.top + (deltaTop*pcnt);
-				}
-
-			}, speed );
-		}
-		
 		,animate = function( callback, duration, onComplete )
 		{	
 			var fps = 60, delta = 0, lastCalledTime = Date.now();
@@ -161,23 +137,28 @@
 				counter += (resolution*(fps/delta));
 				
 			}, resolution );
+			
+			return interval;
 		}
 
 		,scrollOffset = function( el ) 
 		{
-			var left = 0, top = 0;
+			var d = self.document
+				,w = self.window
+				,left = 0
+				,top = 0;
 			
 			// Get the elements scroll position
 			// Ignoring if it's the document or body
-			if( el && el !== self.document.body && el !== self.document.documentElement ){
+			if( el !== d.body && el !== d.documentElement ){
 				left = el.scrollLeft; 
 				top = el.scrollTop;
 			}
 			
 			// Get document scroll position
 			else{
-				left = (self.window.scrollX  || self.window.pageXOffset || self.document.documentElement.scrollLeft); 
-				top = (self.window.scrollY  || self.window.pageYOffset || self.document.documentElement.scrollTop);
+				left = (w.scrollX  || w.pageXOffset || d.documentElement.scrollLeft); 
+				top = (w.scrollY  || w.pageYOffset || d.documentElement.scrollTop);
 			}
 			
 			return{
@@ -185,7 +166,7 @@
 				top:top
 			}
 		}
-		
+
 		,documentOutterRect = function() 
 		{
 			var body = self.document.body, 
@@ -207,27 +188,61 @@
 		
 		,getElementRect = function( el ) 
 		{
-			var bounds = el.getBoundingClientRect(),
-				left = bounds.left + (self.window.scrollX  || self.window.pageXOffset || self.document.documentElement.scrollLeft),
-				top = bounds.top + (self.window.scrollY  || self.window.pageYOffset || self.document.documentElement.scrollTop),
-				width = (bounds.right - bounds.left),
-				height = (bounds.bottom - bounds.top),
-				centerLeft = (left + (width*0.5)),
-				centerTop = (top + (height*0.5));
+			var d = self.document
+				,w = self.window
+				,bounds = el.getBoundingClientRect()
+				,left = bounds.left + (w.scrollX  || w.pageXOffset || d.documentElement.scrollLeft)
+				,top = bounds.top + (w.scrollY  || w.pageYOffset || d.documentElement.scrollTop)
+				,width = (bounds.right - bounds.left)
+				,height = (bounds.bottom - bounds.top)
+				,centerLeft = (left + (width*0.5))
+				,centerTop = (top + (height*0.5));
 			
 			return { 
-				left:left, 
-				top:top,
-				width:width,
-				height:height,
-				center:{
-					left:centerLeft,
-					top:centerTop
+				left:left
+				,top:top
+				,width:width
+				,height:height
+				,center:{
+					left:centerLeft
+					,top:centerTop
 				}
 			};
 		}
-		
-		
+			
+		,getElementOffsetRect = function(el,parent)
+		{
+			var d = self.document
+				,w = self.window;
+				
+			// If we're checking against the body
+			// then we can use the normal method
+			if( parent == d.body || parent == d.documentElement ){
+				return getElementRect(el);
+			}
+			
+			var scroll = scrollOffset(parent)
+				,parentBounds = parent.getBoundingClientRect()
+				,bounds = el.getBoundingClientRect()
+				,left = (bounds.left-parentBounds.left+scroll.left)
+				,top = (bounds.top-parentBounds.top+scroll.top)
+				,width = (bounds.right - bounds.left)
+				,height = (bounds.bottom - bounds.top)
+				,centerLeft = (left + (width*0.5))
+				,centerTop = (top + (height*0.5));
+			
+			return { 
+				left:left
+				,top:top
+				,width:width
+				,height:height
+				,center:{
+					left:centerLeft
+					,top:centerTop
+				}
+			};
+		}
+
 		,createBoxElement = function()
 		{
 			var boxEl = self.document.createElement("DIV");
@@ -244,25 +259,26 @@
 
 		,nextStep = function()
 		{
-			gotoStep( (currentStepIndex+1) );
+			goto( (currentStepIndex+1) );
 		}
 		
 		,prevStep = function()
 		{
-			gotoStep( (currentStepIndex-1) );
+			goto( (currentStepIndex-1) );
 		}
-		
-		,gotoStep = function( stepNum )
+			
+		,goto = function( stepNum )
 		{
+			var d = self.document
+				,w = self.window;
+			
 			if( settings && settings.onBeforeGoto )
 				settings.onBeforeGoto( self );
 			
-			// If animating, exit
-			if( isAnimating )
-				return;
-			
-			// Flag as animating
-			isAnimating = true;
+			// If animating, stop
+			if( animation ){
+				stop();
+			}
 		
 			// Validate the goto step
 			if( isNaN(stepNum) || currentSet[ stepNum ] === undefined ){
@@ -278,7 +294,7 @@
 			
 			// Ensure we actually have a step
 			if( !currentStep || !currentStep.element ){
-				throw new Error("uiGlide: Step not found: Set: "+currentSetName+", Index: "+currentStepIndex);
+				throw new Error("uiGlide: Step not found: Set: "+currentSet+", Index: "+currentStepIndex);
 			}
 		
 			if( currentStep && currentStep.onBeforeStep )
@@ -337,18 +353,41 @@
 			}
 			
 			// Capture the current state of the focusBox
+			var focusStart = getElementOffsetRect( focusBoxEl, settings.parent );
+			
 			var startWidth = parseInt(focusBoxEl.style.width, 10);
 			var startHeight = parseInt(focusBoxEl.style.height, 10);
 			var startLeft = parseInt(focusBoxEl.style.left, 10);
 			var startTop = parseInt(focusBoxEl.style.top, 10);
 			
+			// Capture teh Scroll starting position
+			var scrollStart = scrollOffset( settings.parent );
+			
 			removePositionalClasses();
 			
 			// Begin Animation
-			animate( function( percent ){
+			animation = animate( function( pcnt ){
+				
+				var scrollEndLeft = (currentStep.element.offsetLeft - settings.documentPadding);
+				var scrollEndTop = (currentStep.element.offsetTop - settings.documentPadding);
+
+				var scrollLeft = lerp(scrollStart.left,scrollEndLeft,pcnt); 
+				var scrollTop = lerp(scrollStart.top,scrollEndTop,pcnt); 
+				
+				if( !settings.parent || settings.parent == d.body || settings.parent == d.documentElement ){
+					d.body.scrollLeft = scrollLeft;
+					d.body.scrollTop = scrollTop;
+					d.documentElement.scrollLeft = scrollLeft;
+					d.documentElement.scrollTop = scrollTop;
+				}
+				
+				else{
+					settings.parent.scrollLeft = scrollLeft;
+					settings.parent.scrollTop = scrollTop;
+				}
 
 				// Get the target object sdimensions
-				var targetRect = getElementRect( currentStep.element );
+				var targetRect = getElementOffsetRect( currentStep.element, settings.parent );
 
 				var endWidth = Math.max(targetRect.width, settings.minWidth) + (settings.padding*2);
 				var endHeight = Math.max(targetRect.height, settings.minHeight) + (settings.padding*2);
@@ -378,15 +417,15 @@
 					endTop -= ((endTop+endHeight) - boundsBottom);
 				}
 
-				var w = lerp(startWidth,endWidth,percent);
-				var h = lerp(startHeight,endHeight,percent); 
-				var x = lerp(startLeft,endLeft,percent); 
-				var y = lerp(startTop,endTop,percent); 
+				var w = lerp(focusStart.width,endWidth,pcnt);
+				var h = lerp(focusStart.height,endHeight,pcnt); 
+				var x = lerp(focusStart.left,endLeft,pcnt); 
+				var y = lerp(focusStart.top,endTop,pcnt); 
 
 				updateFocusBox(x,y,w,h);
 
 			}, settings.transition, function(){
-				isAnimating = false;
+				stop();
 				
 				addPositionalClasses();
 				
@@ -396,17 +435,30 @@
 				if( settings && settings.onAfterGoto )
 					settings.onAfterGoto( self );
 			});
-						
-					
-			// Scroll page to the step element and focus box
-			scrollTo(
-				settings.parent
-				,(currentStep.element.offsetLeft - settings.documentPadding)
-				,(currentStep.element.offsetTop - settings.documentPadding)
-				,settings.transition
-			);
+			
+			// Enable Chaining
+			return self;
 		}
-
+	
+		,stop = function()
+		{
+			clearInterval(animation);
+			animation = null;
+			
+			// Enable Chaining
+			return self;
+		}
+		
+		,updateRect = function( el, width, height, left, top, right, bottom )
+		{
+			el.style.width = width;
+			el.style.height = height;
+			el.style.left = left;
+			el.style.top = top;
+			el.style.right = right;
+			el.style.bottom = bottom;
+		}
+		
 		,updateFocusBox = function(x,y,w,h)
 		{
 			var focusWidth = w;
@@ -417,42 +469,64 @@
 			// Use the doc height to ensure we fill the entire screen
 			var docRect = documentOutterRect();
 
-			focusBoxEl.style.width = Math.max( (focusWidth-(settings.borderWidth*2)),0)+"px";
-			focusBoxEl.style.height = Math.max( (focusHeight-(settings.borderWidth*2)),0)+"px";
-			focusBoxEl.style.left = focusLeft+"px";
-			focusBoxEl.style.top = focusTop+"px";
+			updateRect(
+				focusBoxEl
+				,Math.max( (focusWidth-(settings.borderWidth*2)),0)+"px"
+				,Math.max( (focusHeight-(settings.borderWidth*2)),0)+"px"
+				,focusLeft+"px"
+				,focusTop+"px"
+				,"auto"
+				,"auto" 
+			);
 			focusBoxEl.style.borderWidth = settings.borderWidth+"px";
 			
-			leftBoxEl.style.width = Math.max(focusLeft,0)+"px";
-			leftBoxEl.style.height = Math.max(docRect.height,0)+"px";
-			leftBoxEl.style.left = "0px";
-			leftBoxEl.style.top = "0px";
-			leftBoxEl.style.bottom = "auto";
+			updateRect(
+				leftBoxEl
+				,Math.max(focusLeft,0)+"px"
+				,Math.max(docRect.height,0)+"px"
+				,"0px"
+				,"0px"
+				,"auto"
+				,"auto" 
+			);
+			
+			updateRect(
+				rightBoxEl
+				,"auto"
+				,Math.max(docRect.height,0)+"px"
+				,(focusLeft+focusWidth)+"px"
+				,"0px"
+				,"0px"
+				,"auto" 
+			);
+			
+			updateRect(
+				topBoxEl
+				,Math.max(focusWidth,0)+"px"
+				,Math.max(focusTop,0)+"px"
+				,focusLeft+"px"
+				,"0px"
+				,"auto"
+				,"auto" 
+			);
 
-			rightBoxEl.style.width = "auto";
-			rightBoxEl.style.height = Math.max(docRect.height,0)+"px";
-			rightBoxEl.style.left = (focusLeft+focusWidth)+"px";
-			rightBoxEl.style.right = "0px";
-			rightBoxEl.style.top = "0px";
-			rightBoxEl.style.bottom = "auto";
-			
-			topBoxEl.style.width = Math.max(focusWidth,0)+"px";
-			topBoxEl.style.height = Math.max(focusTop,0)+"px";
-			topBoxEl.style.left = focusLeft+"px";
-			topBoxEl.style.top = "0px";
-			topBoxEl.style.bottom = "auto";
-			
-			bottomBoxEl.style.width = Math.max(focusWidth,0)+"px";
-			bottomBoxEl.style.height = Math.max( (docRect.height - (focusTop+focusHeight)),0)+"px";
-			bottomBoxEl.style.left = focusLeft+"px";
-			bottomBoxEl.style.top = (focusTop+focusHeight)+"px";
-			bottomBoxEl.style.bottom = "auto";
+			updateRect(
+				bottomBoxEl
+				,Math.max(focusWidth,0)+"px"
+				,Math.max( (docRect.height - (focusTop+focusHeight)),0)+"px"
+				,focusLeft+"px"
+				,(focusTop+focusHeight)+"px"
+				,"auto"
+				,"auto" 
+			);
+
 		}
+		
 		
 		,addPositionalClasses = function()
 		{
 			// Get the target object sdimensions
-			var focusRect = getElementRect( focusBoxEl );
+			var focusRect = getElementOffsetRect( focusBoxEl,settings.parent );
 			var docRect = documentOutterRect();
 			var topDelta = (focusRect.top-docRect.top)
 				,bottomDelta = (docRect.top+docRect.height) - (focusRect.top+focusRect.height) 
@@ -492,6 +566,8 @@
 			// Remove interface events
 			$(self.window).off( "orientationchange", _onWindowResize );
 			$(self.window).off( "resize", _onWindowResize );
+			$(settings.parent).off( "orientationchange", _onWindowResize );
+			$(settings.parent).off( "resize", _onWindowResize );
 			
 			$(prevBtnEl).off("click", _onPrevClick);
 			$(prevBtnEl).off("touchstart", _onPrevClick);
@@ -530,18 +606,33 @@
 				,bottomBoxEl
 			];
 			for(var i=(els.length-1); i>=0; i-- ){
-				self.removeElement( els[i] );
+				$( els[i] ).remove();
 				els[i] = null;
 			}
 
 			if( settings && settings.onAfterClose )
 				settings.onAfterClose( self );
+
+			// Complete Closing
+			isClosing = false;
 		}
 
 		,close = function()
 		{
+			if( isOpening ){
+				throw new Error("uiGlide: Tried to close before completing the opening.");
+			}
+			
+			// Begin Closing
+			isClosing = true;
+			
 			if( settings && settings.onBeforeClose )
 				settings.onBeforeClose( self );
+			
+			// If animating, stop
+			if( animation ){
+				stop();
+			}
 			
 			// Fade-out the elements
 			var fadeEls = [
@@ -559,6 +650,8 @@
 				}
 			}, settings.fadeOut, cleanUp );
 
+			// Enable Chaining
+			return self;
 		}
 		
 		,loadSet = function( setName )
@@ -654,7 +747,9 @@
 				}
 			}
 			
-			// Window events
+			// Resize events
+			$(settings.parent).on( "orientationchange", _onWindowResize );
+			$(settings.parent).on( "resize", _onWindowResize );
 			$(self.window).on( "orientationchange", _onWindowResize );
 			$(self.window).on( "resize", _onWindowResize );
 			
@@ -669,12 +764,23 @@
 		
 		,open = function( setName, stepNum )
 		{
+			if( isClosing ){
+				throw new Error("uiGlide: Tried to open before completing the close.");
+			}
+			
+			if( focusBoxEl ){
+				throw new Error("uiGlide: You can only open one glide at a time.");
+			}
+			
+			// Begin Opening
+			isOpening = true;
+			
 			if( settings && settings.onBeforeOpen )
 				settings.onBeforeOpen( self );
 			
 			buildUI();
 			
-			// Fade-in the element
+			// Fade-in the elements
 			animate(function( pcnt ){
 				opacity(focusBoxEl,pcnt);
 			}, settings.fadeIn);
@@ -685,8 +791,6 @@
 				,topBoxEl
 				,bottomBoxEl
 			];
-
-			// Fade-in the element
 			animate(function( pcnt ){
 				for(var i=(els.length-1); i>=0; i-- ){
 					opacity(els[i],pcnt);
@@ -699,8 +803,12 @@
 			// Cache the Set
 			loadSet( setName );
 			
+			// Opeing complete
+			isOpening = false;
+			
 			// Goto the step in the set
-			gotoStep( stepNum );
+			// Enable Chaining
+			return goto( stepNum );
 		}
 		
 		,getIncontextSteps = function()
@@ -824,7 +932,7 @@
 		{
 			clearTimeout(resizeTimer);
 			resizeTimer = setTimeout(function(){
-				gotoStep( currentStepIndex );
+				goto( currentStepIndex );
 			}, 250);
 		}
 		
@@ -835,6 +943,7 @@
 		{
 			if( args ){
 				settings = $.extend( {}, settings, args );
+				settings.parent = settings.parent || document.body;
 				self.window = args.window || window;
 				self.document = args.document || document;
 			}
@@ -856,8 +965,6 @@
 			
 			// Order steps by set
 			stepList = sortBySet( stepList );
-			
-			open();
 		};
 		
 		/**
@@ -867,7 +974,8 @@
 		self.close = close;
 		self.next = nextStep;
 		self.prev = prevStep;
-		self.goto = gotoStep;
+		self.goto = goto;
+		self.stop = stop;
 		
 		/**
 		* Public Accessor Methods
@@ -898,6 +1006,7 @@
 		self.getCurrentStep = function(){
 			return currentStep;
 		};
+		
 		self.getCurrentStepIndex = function(){
 			return currentStepIndex;
 		};
@@ -915,8 +1024,15 @@
 		
 		// Constructor
 		init();
-		
-		return self;
+	}
+	$.uiGlide = function( args )
+	{
+		return new uiGlide( args );
+	}
+    $.fn.uiGlide = function( args )
+	{
+		args.parent = $(this)[0] || null;
+		return new uiGlide( args );
 	}
 	
 }( jQuery ));
