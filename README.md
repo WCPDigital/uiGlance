@@ -11,8 +11,6 @@ jQuery demonstration: [See here](http://uiglide.com/uiGlide/examples/jQuery/)
 
 Standalone demonstration: [See here](http://uiglide.com/uiGlide/examples/Standalone/)
 
-Prebuilt files, themes and examples can be downloaded from http://uiglide.com
-
 ### Downloading the prebuilt files
 
 Prebuilt files, themes and examples can be downloaded from http://uiglide.com
