@@ -24,7 +24,7 @@ Prebuilt files, themes and examples can be downloaded from http://uiglide.com
 
 ### Including it on your page
 
-Include jQuery, the uiGlide plugin and a CSS theme file on a page. Then apply a few simple "data-" attributes to the elements on your page that you want to highlight or explain. Once ready, initialise the guide by calling the `uiGlide` method, followed by the `open` method.
+Include jQuery, the uiGlide plugin and a CSS theme file on a page. Then apply a few simple "data-" attributes to the elements you want to highlight or explain. Once ready, initialise the guide by calling the `uiGlide` method, followed by the `open` method.
 
 ```html
 <head>
@@ -63,7 +63,7 @@ var uig = new uiGlide( {
 	,steps:[
 		element:document.getElementById("myDOMElementId")
 		,index:0
-		,set:"help"
+		,set:"demo_set"
 		,title:"Welcome to uiGlide"
 		,desc:"uiGlide helps you communicate with your audience."
 		,html:"<p>Custom inner HTML content</p>"
@@ -87,3 +87,4 @@ See the [Contributing Guidelines](CONTRIBUTING.md) for details.
 ## License
 Copyright &copy; WCP Digital &amp; Patrick Purcell<br>
 Licensed under the [MIT license](http://www.opensource.org/licenses/mit-license.php).
+<br>**Commercial use?** Go for it! You can include uiGlide in your commercial products.
