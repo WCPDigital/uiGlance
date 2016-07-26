@@ -24,15 +24,19 @@ Prebuilt files, themes and examples can be downloaded from http://uiglide.com
 
 ### Including it on your page
 
-Include jQuery, the uiGlide plugin and a CSS theme file on a page. Then apply a few simple "data-" attributes to the elements you want to highlight or explain. Once ready, initialise the guide by calling the `uiGlide` method, followed by the `open` method.
+Include jQuery, the uiGlide plugin and a CSS theme files on a page. Then apply a few simple "data-" attributes to the elements you want to highlight or explain. Once ready, initialise the guide by calling the `uiGlide` method, followed by the `open` method.
 
 ```html
 <head>
 	<link href="uiglide.default.css" rel="stylesheet">
 </head>
 <body>
-	<div data-uigset="demo_set" data-uigstep="0" data-uigtitle="My title" 
+	<div id="myDOMElementId" data-uigset="demo_set" data-uigstep="0" data-uigtitle="My title" 
 		data-uigdesc="My description" data-uightml="<p>Custom inner HTML content</p>">
+	...
+	</div>
+	<div id="myDOMElementId2" data-uigset="demo_set" data-uigstep="1" data-uigtitle="My other title" 
+		data-uigdesc="My other description" data-uightml="<p>The other custom HTML content</p>">
 	...
 	</div>
 </body>
@@ -69,10 +73,10 @@ var uig = new uiGlide( {
 			,desc:"uiGlide helps you communicate with your audience."
 			,html:"<p>Custom inner HTML content</p>"
 			,onStep:function(ui){
-				var stepIdx = ui.getCurrentStepIndex();
-				var step = ui.getCurrentStep();
-				var stepTitle = step.title;
-				var stepSet = step.set;
+				var stepIdx = ui.getCurrentStepIndex()
+					,step = ui.getCurrentStep()
+					,stepTitle = step.title
+					,stepSet = step.set;
 				console.log("On Step. Set: '"+stepSet+"', Index: '"+stepIdx+"', title: '"+stepTitle+"'" );
 			}
 		}
