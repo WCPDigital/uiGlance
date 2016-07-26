@@ -8,6 +8,7 @@ A cross-browser, mobile-responsive JavaScript and jQuery plugin for user interfa
 ### Try it out
 
 jQuery demonstration: [See here](http://uiglide.com/uiGlide/examples/jQuery/)
+
 Standalone demonstration: [See here](http://uiglide.com/uiGlide/examples/Standalone/)
 
 Prebuilt files, themes and examples can be downloaded from http://uiglide.com
