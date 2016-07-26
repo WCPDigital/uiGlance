@@ -3,7 +3,7 @@
 
 A cross-browser, mobile-responsive JavaScript and jQuery plugin for user interface (UI) guides, interactive application help and workflow demonstrations.
 
-The uiGlide plugin supports all major browsers (Chrome, Firefox, Safari, IE) and will even work as as far back as IE7+ if you include [Respond.js] https://github.com/scottjehl/Respond and [html5shiv] https://github.com/aFarkas/html5shiv
+The uiGlide plugin supports all major browsers (Chrome, Firefox, Safari, IE) and will even work as as far back as IE7+ if you include [Respond.js](https://github.com/scottjehl/Respond) and [html5shiv](https://github.com/aFarkas/html5shiv)
 
 ## Getting Started
 
