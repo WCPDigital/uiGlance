@@ -5,6 +5,11 @@
 
 The uiGlide plugin supports all major browsers **(Chrome, Firefox, Safari, IE)** and will even work as as far back as **IE7+ if you include [Respond.js](https://github.com/scottjehl/Respond) and [html5shiv](https://github.com/aFarkas/html5shiv)**.
 
+1. Appearance is controlled through CSS and can easily be restyled.
+2. Animations and presentation can be enhanced through numerous timed callbacks.
+3. Leverages HTML5 data attributes, but can be completely unobtrusive with all configuration set through JavaScript.
+4. Lightweight: 12KB of JavaScript (less than 7KBs gzipped).
+
 ## Getting Started
 
 ### Try it out
