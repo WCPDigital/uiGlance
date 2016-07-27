@@ -379,15 +379,13 @@ function uiGlide( args )
 			var scrollTop = lerp(scrollStart.top,scrollEndTop,pcnt); 
 			
 			if( !settings.parent || settings.parent == d.body || settings.parent == d.documentElement ){
-				d.body.scrollLeft = scrollLeft;
-				d.body.scrollTop = scrollTop;
-				d.documentElement.scrollLeft = scrollLeft;
-				d.documentElement.scrollTop = scrollTop;
+				d.documentElement.scrollLeft = d.body.scrollLeft = (scrollLeft-settings.documentPadding);
+				d.documentElement.scrollTop = d.body.scrollTop = (scrollTop-settings.documentPadding);
 			}
 			
 			else{
-				settings.parent.scrollLeft = scrollLeft;
-				settings.parent.scrollTop = scrollTop;
+				settings.parent.scrollLeft = scrollLeft-settings.documentPadding;
+				settings.parent.scrollTop = scrollTop-settings.documentPadding;
 			}
 
 			// Get the target object sdimensions
