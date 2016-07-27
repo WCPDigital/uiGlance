@@ -50,14 +50,17 @@
 			,steps:[]
 			,defaultSet:"uiGlide"
 
-			,transition:500
 			,fadeIn:1000
 			,fadeOut:500
-			,minWidth:220
-			,minHeight:125
+			,documentPadding:20
+			
+			,transition:500
 			,padding:10
 			,borderWidth:2
-			,documentPadding:20
+			,minWidth:220
+			,minHeight:125
+			,maxWidth:800
+			,maxHeight:600
 			,passthrough:true
 
 			,dataUISet:"data-uigset"
@@ -338,6 +341,9 @@
 				focusBoxEl.style.pointerEvents = "auto";
 			}
 			
+			// Add the border
+			focusBoxEl.style.borderWidth = currentStep.borderWidth+"px";
+			
 			// Toggle Prev/Next Buttons
 			if( stepNum <= 0 ){
 				prevBtnEl.style.display = "none";
@@ -351,6 +357,7 @@
 			else{
 				nextBtnEl.style.display = "block";
 			}
+			
 			
 			// Capture the current state of the focusBox
 			var focusStart = getElementOffsetRect( focusBoxEl, settings.parent );
@@ -389,8 +396,13 @@
 				// Get the target object sdimensions
 				var targetRect = getElementOffsetRect( currentStep.element, settings.parent );
 
-				var endWidth = Math.max(targetRect.width, settings.minWidth) + (settings.padding*2);
-				var endHeight = Math.max(targetRect.height, settings.minHeight) + (settings.padding*2);
+				var padding = (currentStep.padding*2);
+				var border = (currentStep.borderWidth*2)
+				var endWidth = Math.max( (targetRect.width + padding - border), currentStep.minWidth);
+				var endHeight = Math.max( (targetRect.height + padding - border), currentStep.minHeight);
+				endWidth = Math.min( (endWidth + padding - border), currentStep.maxWidth);
+				endHeight = Math.min( (endHeight + padding - border), currentStep.maxHeight);
+				
 				var endLeft = targetRect.center.left - (endWidth*0.5);
 				var endTop = targetRect.center.top - (endHeight*0.5);
 
@@ -424,7 +436,7 @@
 
 				updateFocusBox(x,y,w,h);
 
-			}, settings.transition, function(){
+			}, currentStep.transition, function(){
 				stop();
 				
 				addPositionalClasses();
@@ -471,14 +483,13 @@
 
 			updateRect(
 				focusBoxEl
-				,Math.max( (focusWidth-(settings.borderWidth*2)),0)+"px"
-				,Math.max( (focusHeight-(settings.borderWidth*2)),0)+"px"
+				,Math.max(focusWidth,0)+"px"
+				,Math.max(focusHeight,0)+"px"
 				,focusLeft+"px"
 				,focusTop+"px"
 				,"auto"
 				,"auto" 
 			);
-			focusBoxEl.style.borderWidth = settings.borderWidth+"px";
 			
 			updateRect(
 				leftBoxEl
@@ -833,6 +844,13 @@
 					,title:title
 					,desc:desc
 					,html:html
+					,transition:settings.transition
+					,minWidth:settings.minWidth
+					,minHeight:settings.minHeight
+					,maxWidth:settings.maxWidth
+					,maxHeight:settings.maxHeight
+					,borderWidth:settings.borderWidth
+					,padding:settings.padding
 					,passthrough:passthrough || settings.passthrough
 					,onBeforeStep:settings.onBeforeStep
 					,onAfterStep:settings.onAfterStep
@@ -850,6 +868,27 @@
 				arr.index = i;
 				if( !arr.set ){
 					arr.set = settings.defaultSet
+				}
+				if( !arr.transition ){
+					arr.transition = settings.transition;
+				}
+				if( !arr.minWidth ){
+					arr.minWidth = settings.minWidth;
+				}
+				if( !arr.minHeight ){
+					arr.minHeight = settings.minHeight;
+				}
+				if( !arr.maxWidth ){
+					arr.maxWidth = settings.maxWidth;
+				}
+				if( !arr.maxHeight ){
+					arr.maxHeight = settings.maxHeight;
+				}
+				if( arr.padding === undefined || arr.padding === null ){
+					arr.padding = settings.padding
+				}
+				if( arr.borderWidth === undefined || arr.borderWidth === null ){
+					arr.borderWidth = settings.borderWidth
 				}
 				if( arr.passthrough === undefined || arr.passthrough === null ){
 					arr.passthrough = settings.passthrough
