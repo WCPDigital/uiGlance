@@ -55,8 +55,8 @@ function uiGlide( args )
 		,transition:500
 		,padding:10
 		,borderWidth:2
-		,minWidth:220
-		,minHeight:125
+		,minWidth:180
+		,minHeight:120
 		,maxWidth:800
 		,maxHeight:600
 		,passthrough:true
@@ -405,30 +405,29 @@ function uiGlide( args )
 			var docRect = documentOutterRect();
 			
 			// Test for body overflow, adjust as best as we can.
-			var boundsLeft = (docRect.left+settings.documentPadding)
-				,boundsRight = (docRect.left+docRect.width-settings.documentPadding)
-				,boundsTop = (docRect.top+settings.documentPadding)
-				,boundsBottom = (docRect.top+docRect.height-settings.documentPadding);
-				
-			if( boundsLeft > endLeft ){
-				endLeft = boundsLeft;
+			var bounds = {
+				left:(docRect.left+settings.documentPadding)
+				,right:(docRect.left+docRect.width-settings.documentPadding)
+				,top:(docRect.top+settings.documentPadding)
+				,bottom:(docRect.top+docRect.height-settings.documentPadding)
 			}
-			else if( boundsRight < (endLeft+endWidth) ){
-				endLeft -= ((endLeft+endWidth) - boundsRight);
+			if( bounds.left > endLeft ){
+				endLeft += (bounds.left - endLeft);
+			}
+			if( bounds.right < (endLeft+endWidth) ){
+				endWidth -= ((endLeft+endWidth) - bounds.right);
+			}
+			if( bounds.top > endTop ){
+				endTop += (bounds.top - endTop);
+			}
+			if( bounds.bottom < (endTop+endHeight) ){
+				endHeight -= ((endTop+endHeight) - bounds.bottom);
 			}
 
-			if( boundsTop > endTop ){
-				endTop = boundsTop;
-			}
-			else if( boundsBottom < (endTop+endHeight) ){
-				endTop -= ((endTop+endHeight) - boundsBottom);
-			}
-
-			var w = lerp(focusStart.width,endWidth,pcnt);
-			var h = lerp(focusStart.height,endHeight,pcnt); 
-			var x = lerp(focusStart.left,endLeft,pcnt); 
-			var y = lerp(focusStart.top,endTop,pcnt); 
-
+			var x = lerp(focusStart.left,endLeft,pcnt)
+				,y = lerp(focusStart.top,endTop,pcnt)
+				,w = lerp(focusStart.width,endWidth,pcnt)
+				,h = lerp(focusStart.height,endHeight,pcnt); 
 			updateFocusBox(x,y,w,h);
 
 		}, currentStep.transition, function(){
