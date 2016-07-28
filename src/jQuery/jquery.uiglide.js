@@ -35,6 +35,7 @@
 		,focusContentEl = null
 		,titleBoxEl = null
 		,descBoxEl = null
+		,controlsBoxEl = null
 		
 		,prevBtnEl = null
 		,nextBtnEl = null
@@ -56,9 +57,9 @@
 			
 			,transition:500
 			,padding:10
-			,borderWidth:2
+			,borderWidth:1
 			,minWidth:180
-			,minHeight:120
+			,minHeight:200
 			,maxWidth:800
 			,maxHeight:600
 			,passthrough:true
@@ -82,6 +83,7 @@
 			,cssFocusContent:"uig-focus-content"
 			,cssTitleBox:"uig-titlebox"
 			,cssDescBox:"uig-descbox"
+			,cssControlsBox:"uig-controlsbox"
 			,cssPrevBtn:"uig-btn uig-btn-prev"
 			,cssNextBtn:"uig-btn uig-btn-next"
 			,cssCloseBtn:"uig-btn uig-btn-close"
@@ -90,6 +92,7 @@
 			,htmlNextBtn:"<a href=\"javascript:void(0)\">&gt;</a>"
 			,htmlCloseBtn:"<a href=\"javascript:void(0)\">&#10006;</a>"
 			,htmlFocusContent:"<div></div>"
+			,htmlControlsContent:"<div></div>"
 			
 			,onBeforeOpen:null
 			,onAfterOpen:null
@@ -282,7 +285,7 @@
 			if( animation ){
 				stop();
 			}
-		
+
 			// Validate the goto step
 			if( isNaN(stepNum) || currentSet[ stepNum ] === undefined ){
 				stepNum = 0;
@@ -299,7 +302,7 @@
 			if( !currentStep || !currentStep.element ){
 				throw new Error("uiGlide: Step not found: Set: "+currentSet+", Index: "+currentStepIndex);
 			}
-		
+
 			if( currentStep && currentStep.onBeforeStep )
 				currentStep.onBeforeStep( self );
 
@@ -331,6 +334,7 @@
 			// Toggle passthrough pointer events
 			if( currentStep.passthrough ){
 				focusBoxEl.style.pointerEvents = "none";
+				controlsBoxEl.style.pointerEvents = "none";
 				
 				prevBtnEl.style.pointerEvents = "auto";
 				nextBtnEl.style.pointerEvents = "auto";
@@ -339,11 +343,12 @@
 			
 			else{
 				focusBoxEl.style.pointerEvents = "auto";
+				controlsBoxEl.style.pointerEvents = "auto";
 			}
-			
+
 			// Add the border
 			focusBoxEl.style.borderWidth = currentStep.borderWidth+"px";
-			
+				
 			// Toggle Prev/Next Buttons
 			if( stepNum <= 0 ){
 				prevBtnEl.style.display = "none";
@@ -358,7 +363,6 @@
 				nextBtnEl.style.display = "block";
 			}
 			
-			
 			// Capture the current state of the focusBox
 			var focusStart = getElementOffsetRect( focusBoxEl, settings.parent );
 			
@@ -370,26 +374,10 @@
 			// Capture teh Scroll starting position
 			var scrollStart = scrollOffset( settings.parent );
 			
-			removePositionalClasses();
+			resetFocusClasses( currentStep );
 			
 			// Begin Animation
 			animation = animate( function( pcnt ){
-				
-				var scrollEndLeft = (currentStep.element.offsetLeft - settings.documentPadding);
-				var scrollEndTop = (currentStep.element.offsetTop - settings.documentPadding);
-
-				var scrollLeft = lerp(scrollStart.left,scrollEndLeft,pcnt); 
-				var scrollTop = lerp(scrollStart.top,scrollEndTop,pcnt); 
-				
-				if( !settings.parent || settings.parent == d.body || settings.parent == d.documentElement ){
-					d.documentElement.scrollLeft = d.body.scrollLeft = (scrollLeft-settings.documentPadding);
-					d.documentElement.scrollTop = d.body.scrollTop = (scrollTop-settings.documentPadding);
-				}
-				
-				else{
-					settings.parent.scrollLeft = scrollLeft;
-					settings.parent.scrollTop = scrollTop;
-				}
 
 				// Get the target object sdimensions
 				var targetRect = getElementOffsetRect( currentStep.element, settings.parent );
@@ -400,14 +388,13 @@
 				var endHeight = Math.max( (targetRect.height + padding - border), currentStep.minHeight);
 				endWidth = Math.min( (endWidth + padding - border), currentStep.maxWidth);
 				endHeight = Math.min( (endHeight + padding - border), currentStep.maxHeight);
-				
+			
 				var endLeft = targetRect.center.left - (endWidth*0.5);
 				var endTop = targetRect.center.top - (endHeight*0.5);
 
 				// Use the doc height to ensure we don't go outside the screen
 				var docRect = documentOutterRect();
 				
-					
 				// Test for body overflow, adjust as best as we can.
 				var bounds = {
 					left:(docRect.left+settings.documentPadding)
@@ -433,11 +420,29 @@
 					,w = lerp(focusStart.width,endWidth,pcnt)
 					,h = lerp(focusStart.height,endHeight,pcnt); 
 				updateFocusBox(x,y,w,h);
+				
+				
+				var scrollEndLeft = (endLeft - settings.documentPadding);
+				var scrollEndTop = (endTop - settings.documentPadding);
+
+				var scrollLeft = lerp(scrollStart.left,scrollEndLeft,pcnt); 
+				var scrollTop = lerp(scrollStart.top,scrollEndTop,pcnt); 
+				
+				if( !settings.parent || settings.parent == d.body || settings.parent == d.documentElement ){
+					d.documentElement.scrollLeft = d.body.scrollLeft = (scrollLeft-settings.documentPadding);
+					d.documentElement.scrollTop = d.body.scrollTop = (scrollTop-settings.documentPadding);
+				}
+				
+				else{
+					settings.parent.scrollLeft = scrollLeft-settings.documentPadding;
+					settings.parent.scrollTop = scrollTop-settings.documentPadding;
+				}
+
 
 			}, currentStep.transition, function(){
 				stop();
 				
-				addPositionalClasses();
+				addPositionalClasses( currentStep );
 				
 				if( currentStep && currentStep.onStep )
 					currentStep.onStep( self );
@@ -449,7 +454,7 @@
 			// Enable Chaining
 			return self;
 		}
-	
+
 		,stop = function()
 		{
 			clearInterval(animation);
@@ -488,6 +493,17 @@
 				,"auto"
 				,"auto" 
 			);
+			
+			updateRect(
+				controlsBoxEl
+				,Math.max(focusWidth,0)+"px"
+				,Math.max(focusHeight,0)+"px"
+				,focusLeft+"px"
+				,focusTop+"px"
+				,"auto"
+				,"auto" 
+			);
+			
 			
 			updateRect(
 				leftBoxEl
@@ -531,8 +547,8 @@
 
 		}
 		
-		
-		,addPositionalClasses = function()
+
+		,addPositionalClasses = function( stepObj )
 		{
 			// Get the target object sdimensions
 			var focusRect = getElementOffsetRect( focusBoxEl,settings.parent );
@@ -543,31 +559,23 @@
 				,rightDelta = (docRect.left+docRect.width) - (focusRect.left+focusRect.width);
 
 			if( topDelta <= bottomDelta){
-				$(focusBoxEl).addClass(settings.cssFocusBoxTop);
+				self.addClass(focusBoxEl, (stepObj.cssFocusBoxTop||settings.cssFocusBoxTop) );
 			}
 			else{
-				$(focusBoxEl).addClass(settings.cssFocusBoxBottom);
+				self.addClass(focusBoxEl, (stepObj.cssFocusBoxTop||settings.cssFocusBoxBottom) );
 			}
 
 			if( leftDelta <= rightDelta){
-				$(focusBoxEl).addClass(settings.cssFocusBoxLeft);
+				self.addClass(focusBoxEl, (stepObj.cssFocusBoxTop||settings.cssFocusBoxLeft) );
 			}
 			else{
-				$(focusBoxEl).addClass(settings.cssFocusBoxRight);
+				self.addClass(focusBoxEl, (stepObj.cssFocusBoxTop||settings.cssFocusBoxRight) );
 			}		
 		}
 		
-		,removePositionalClasses = function()
+		,resetFocusClasses = function( stepObj )
 		{
-			var arr = [
-				settings.cssFocusBoxLeft
-				,settings.cssFocusBoxRight
-				,settings.cssFocusBoxTop
-				,settings.cssFocusBoxBottom
-			]
-			for(var i=0,len=arr.length; i<len; i++){
-				$(focusBoxEl).removeClass(arr[i]);
-			}
+			focusBoxEl.className = stepObj.cssFocusBox||settings.cssFocusBox;
 		}
 		
 		,cleanUp = function()
@@ -575,6 +583,7 @@
 			// Remove interface events
 			$(self.window).off( "orientationchange", _onWindowResize );
 			$(self.window).off( "resize", _onWindowResize );
+			
 			$(settings.parent).off( "orientationchange", _onWindowResize );
 			$(settings.parent).off( "resize", _onWindowResize );
 			
@@ -609,6 +618,7 @@
 				,descBoxEl
 				,titleBoxEl
 				,focusBoxEl
+				,controlsBoxEl
 				,leftBoxEl
 				,rightBoxEl
 				,topBoxEl
@@ -646,6 +656,7 @@
 			// Fade-out the elements
 			var fadeEls = [
 				focusBoxEl
+				,controlsBoxEl
 				,leftBoxEl
 				,rightBoxEl
 				,topBoxEl
@@ -684,36 +695,40 @@
 		{
 			// Focus Box and UI
 			focusBoxEl = createBoxElement();
-			focusBoxEl.className = settings.cssFocusBox;
-			settings.parent.appendChild( focusBoxEl )
+			settings.parent.appendChild( focusBoxEl );
 
 			focusContentEl = self.document.createElement("DIV");
 			focusContentEl.innerHTML = settings.htmlFocusContent;
 			focusContentEl.className = settings.cssFocusContent;
-			focusBoxEl.appendChild( focusContentEl )
+			focusBoxEl.appendChild( focusContentEl );
 			
 			titleBoxEl = self.document.createElement("DIV");
 			titleBoxEl.className = settings.cssTitleBox;
-			focusBoxEl.appendChild( titleBoxEl )
+			focusBoxEl.appendChild( titleBoxEl );
 
 			descBoxEl = self.document.createElement("DIV");
 			descBoxEl.className = settings.cssDescBox;
-			focusBoxEl.appendChild( descBoxEl )
+			focusBoxEl.appendChild( descBoxEl );
 			
+			controlsBoxEl = createBoxElement();
+			controlsBoxEl.innerHTML = settings.htmlControlsContent;
+			controlsBoxEl.className = settings.cssControlsBox;
+			settings.parent.appendChild( controlsBoxEl );
+				
 			prevBtnEl = self.document.createElement("DIV");
 			prevBtnEl.className = settings.cssPrevBtn;
 			prevBtnEl.innerHTML = settings.htmlPrevBtn;
-			focusBoxEl.appendChild( prevBtnEl );
+			controlsBoxEl.appendChild( prevBtnEl );
 			
 			nextBtnEl = self.document.createElement("DIV");
 			nextBtnEl.className = settings.cssNextBtn;
 			nextBtnEl.innerHTML = settings.htmlNextBtn;
-			focusBoxEl.appendChild( nextBtnEl );
+			controlsBoxEl.appendChild( nextBtnEl );
 			
 			closeBtnEl = self.document.createElement("DIV");
 			closeBtnEl.className = settings.cssCloseBtn;
 			closeBtnEl.innerHTML = settings.htmlCloseBtn;
-			focusBoxEl.appendChild( closeBtnEl );
+			controlsBoxEl.appendChild( closeBtnEl );
 			
 			$(prevBtnEl).on("click", _onPrevClick);
 			$(prevBtnEl).on("touchstart", _onPrevClick);
@@ -792,6 +807,7 @@
 			// Fade-in the elements
 			animate(function( pcnt ){
 				opacity(focusBoxEl,pcnt);
+				opacity(controlsBoxEl,pcnt);
 			}, settings.fadeIn);
 				
 			var els = [
@@ -932,13 +948,13 @@
 					}
 				}
 			}
-			
+
 			for( var i=0, len=b.length; i<len; i++ ){
 				if( !a[i] && b[i] ){
 					a[i] = b[i];
 				}
 			}
-			
+
 			return $.grep( a, function(n, i){
 				return (n != undefined && n != null);
 			} );

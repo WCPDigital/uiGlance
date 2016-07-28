@@ -9,9 +9,8 @@
 	font-size:1.8em;
 	line-height:1.2em;
 
-	background-color:#999;
-	color:#EEE;
-	border:1px solid #BBB;
+	background-color:#ffcc00;
+	color:#000;
 }
 
 .uig-descbox{
@@ -24,14 +23,13 @@
 	font-size:1.1em;
 	line-height:1.2em;
 
-	background-color:#999;
-	color:#EEE;
-	border:1px solid #BBB;
+	background-color:#ffcc00;
+	color:#000;
 }
 
 .uig-focusbox{
 	background:transparent url('toon-right.png') no-repeat right bottom;
-	border:1px solid #DDD;
+	border:1px solid #FFF;
 	
 	-webkit-box-shadow:0 1px 6px 0px #777;
 	-moz-box-shadow:0 1px 6px 0px #777;
@@ -43,6 +41,7 @@
 	-moz-border-radius:5px;
 	border-radius:5px;
 	overflow:hidden;
+	
 	margin:-1px 0 0 -1px;
 }
 
@@ -61,7 +60,7 @@
 }
 
 .uig-box{
-	background:transparent url('bg-white-trans.png');
+	background:transparent url('bg-yellow-trans.png');
 	z-index:9997;
 }
 
@@ -119,15 +118,15 @@
 
 .uig-btn-prev a,
 .uig-btn-next a{
-	border:1px solid #999;
-	background-color:#999;
-	color:#DDD;
+	border:1px solid #000;
+	background-color:#ffcc00;
+	color:#000;
 }	
 
 .uig-btn-prev a:hover,
 .uig-btn-next a:hover{
-	background-color:#AAA;
-	color:#DDD;
+	background-color:#000;
+	color:#ffcc00;
 }
 
 .uig-btn-close{
@@ -138,11 +137,11 @@
 }
 
 .uig-btn-close a{
-	background-color:#999;
-	color:#CCC;
+	background-color:#ffcc00;
+	color:#000;
 }
 
 .uig-btn-close a:hover{
-	background-color:#AAA;
-	color:#DDD;
+	background-color:#000;
+	color:#ffcc00;
 }
