@@ -687,7 +687,7 @@ function uiGlide( args )
 	
 	,loadSet = function( setName )
 	{
-		currentSetName = setName || stepList[0].set || settings.defaultSet;
+		currentSetName = setName || stepList[0] && stepList[0].set || settings.defaultSet;
 		currentSet = [];
 		for( var i=0,len=stepList.length; i<len; i++ ){
 			if( stepList[i].set == currentSetName )
@@ -811,6 +811,9 @@ function uiGlide( args )
 			
 		if( settings && settings.onBeforeOpen )
 			settings.onBeforeOpen( self );
+
+		// Cache the Set
+		loadSet( setName );
 		
 		// Capture the initial scroll position
 		initialScrollPosition = scrollOffset( settings.parent );
@@ -840,9 +843,6 @@ function uiGlide( args )
 
 		if( settings && settings.onAfterOpen )
 			settings.onAfterOpen( self );
-		
-		// Cache the Set
-		loadSet( setName );
 
 		// Opeing complete
 		isOpening = false;

@@ -688,7 +688,7 @@
 		
 		,loadSet = function( setName )
 		{
-			currentSetName = setName || stepList[0].set || settings.defaultSet;
+			currentSetName = setName || stepList[0] && stepList[0].set || settings.defaultSet;
 			currentSet = [];
 			for( var i=0,len=stepList.length; i<len; i++ ){
 				if( stepList[i].set == currentSetName )
@@ -813,7 +813,10 @@
 			
 			if( settings && settings.onBeforeOpen )
 				settings.onBeforeOpen( self );
-
+			
+			// Cache the Set
+			loadSet( setName );
+			
 			// Capture the initial scroll position
 			initialScrollPosition = scrollOffset( settings.parent );
 		
@@ -840,9 +843,6 @@
 
 			if( settings && settings.onAfterOpen )
 				settings.onAfterOpen( self );
-			
-			// Cache the Set
-			loadSet( setName );
 			
 			// Opeing complete
 			isOpening = false;
@@ -1103,8 +1103,9 @@
 	}
     $.fn.uiGlide = function( args )
 	{
-		args.parent = $(this)[0] || null;
-		return new uiGlide( args );
+		return args = args||{}
+			,args.parent = $(this)[0] || null
+			,new uiGlide( args );
 	}
 	
 }( jQuery ));
