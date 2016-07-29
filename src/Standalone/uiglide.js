@@ -29,6 +29,8 @@ function uiGlide( args )
 	
 	,resizeTimer = null
 	
+	,initialScrollPosition = null
+	
 	,focusBoxEl = null
 	,focusContentEl = null
 	,titleBoxEl = null
@@ -48,6 +50,7 @@ function uiGlide( args )
 		parent:document.body || null
 		,steps:[]
 		,defaultSet:"uiGlide"
+		,resetScrollbars:true
 
 		,fadeIn:1000
 		,fadeOut:500
@@ -89,8 +92,8 @@ function uiGlide( args )
 		,htmlPrevBtn:"<a href=\"javascript:void(0)\">&lt;</a>"
 		,htmlNextBtn:"<a href=\"javascript:void(0)\">&gt;</a>"
 		,htmlCloseBtn:"<a href=\"javascript:void(0)\">&#10006;</a>"
-		,htmlFocusContent:"<div></div>"
-		,htmlControlsContent:"<div></div>"
+		,htmlFocusContent:""
+		,htmlControlsContent:""
 		
 		,onBeforeOpen:null
 		,onAfterOpen:null
@@ -272,10 +275,7 @@ function uiGlide( args )
 	}
 	
 	,goto = function( stepNum )
-	{
-		var d = self.document
-			,w = self.window;
-		
+	{	
 		if( settings && settings.onBeforeGoto )
 			settings.onBeforeGoto( self );
 		
@@ -320,14 +320,6 @@ function uiGlide( args )
 		else{
 			descBoxEl.style.display = "none";
 		}
-
-		if( currentStep && currentStep.html ){
-			focusContentEl.style.display = "block";
-			focusContentEl.innerHTML = currentStep.html;
-		}
-		else{
-			focusContentEl.style.display = "none";
-		}
 		
 		// Toggle passthrough pointer events
 		if( currentStep.passthrough ){
@@ -344,6 +336,9 @@ function uiGlide( args )
 			controlsBoxEl.style.pointerEvents = "auto";
 		}
 
+		// Update the Focus box content
+		focusContentEl.innerHTML = currentStep.html;
+		
 		// Add the border
 		focusBoxEl.style.borderWidth = currentStep.borderWidth+"px";
 			
@@ -369,7 +364,7 @@ function uiGlide( args )
 		var startLeft = parseInt(focusBoxEl.style.left, 10);
 		var startTop = parseInt(focusBoxEl.style.top, 10);
 		
-		// Capture teh Scroll starting position
+		// Capture the Scroll current position
 		var scrollStart = scrollOffset( settings.parent );
 		
 		resetFocusClasses( currentStep );
@@ -419,22 +414,14 @@ function uiGlide( args )
 				,h = lerp(focusStart.height,endHeight,pcnt); 
 			updateFocusBox(x,y,w,h);
 			
-
-			var scrollEndLeft = (endLeft - settings.documentPadding);
-			var scrollEndTop = (endTop - settings.documentPadding);
-
-			var scrollLeft = lerp(scrollStart.left,scrollEndLeft,pcnt); 
-			var scrollTop = lerp(scrollStart.top,scrollEndTop,pcnt); 
-			
-			if( !settings.parent || settings.parent == d.body || settings.parent == d.documentElement ){
-				d.documentElement.scrollLeft = d.body.scrollLeft = (scrollLeft-settings.documentPadding);
-				d.documentElement.scrollTop = d.body.scrollTop = (scrollTop-settings.documentPadding);
-			}
-			
-			else{
-				settings.parent.scrollLeft = scrollLeft-settings.documentPadding;
-				settings.parent.scrollTop = scrollTop-settings.documentPadding;
-			}
+			var scrollEndLeft = (endLeft - settings.documentPadding)
+				,scrollEndTop = (endTop - settings.documentPadding)
+				,scrollLeft = lerp(scrollStart.left,scrollEndLeft,pcnt) 
+				,scrollTop = lerp(scrollStart.top,scrollEndTop,pcnt); 
+				updateParentScroll(
+					(scrollLeft-settings.documentPadding)
+					,(scrollTop-settings.documentPadding)
+				);
 
 		}, currentStep.transition, function(){
 			stop();
@@ -459,6 +446,21 @@ function uiGlide( args )
 		
 		// Enable Chaining
 		return self;
+	}
+	
+	,updateParentScroll = function(left,top)
+	{
+		var d = self.document;
+		if( !settings.parent || settings.parent === d.body || settings.parent === d.documentElement ){
+			d.documentElement.scrollLeft = d.body.scrollLeft = left;
+			d.documentElement.scrollTop = d.body.scrollTop = top;
+		}
+		
+		else{
+			settings.parent.scrollLeft = left;
+			settings.parent.scrollTop = top;
+		}
+
 	}
 	
 	,updateRect = function( el, width, height, left, top, right, bottom )
@@ -554,19 +556,22 @@ function uiGlide( args )
 			,leftDelta = (focusRect.left-docRect.left) 
 			,rightDelta = (docRect.left+docRect.width) - (focusRect.left+focusRect.width);
 
+		var cssClass = "";
 		if( topDelta <= bottomDelta){
-			self.addClass(focusBoxEl, (stepObj.cssFocusBoxTop||settings.cssFocusBoxTop) );
+			cssClass = stepObj.cssFocusBoxTop||settings.cssFocusBoxTop;
 		}
 		else{
-			self.addClass(focusBoxEl, (stepObj.cssFocusBoxTop||settings.cssFocusBoxBottom) );
+			cssClass = stepObj.cssFocusBoxTop||settings.cssFocusBoxBottom;
 		}
+		self.addClass(focusBoxEl, cssClass);
 
 		if( leftDelta <= rightDelta){
-			self.addClass(focusBoxEl, (stepObj.cssFocusBoxTop||settings.cssFocusBoxLeft) );
+			cssClass = stepObj.cssFocusBoxTop||settings.cssFocusBoxLeft;
 		}
 		else{
-			self.addClass(focusBoxEl, (stepObj.cssFocusBoxTop||settings.cssFocusBoxRight) );
-		}		
+			cssClass = stepObj.cssFocusBoxTop||settings.cssFocusBoxRight;
+		}
+		self.addClass(focusBoxEl, cssClass);		
 	}
 	
 	,resetFocusClasses = function( stepObj )
@@ -657,11 +662,23 @@ function uiGlide( args )
 			,topBoxEl
 			,bottomBoxEl
 		];
+		
+		// Capture the Scroll current position
+		var scrollStart = scrollOffset( settings.parent );
+		
 		animate(function( pcnt ){
+			
+			if( settings.resetScrollbars ){
+				var scrollLeft = lerp(scrollStart.left,initialScrollPosition.left,pcnt) 
+					,scrollTop = lerp(scrollStart.top,initialScrollPosition.top,pcnt); 
+				updateParentScroll(scrollLeft,scrollTop);
+			}
+			
 			pcnt = (1-pcnt);
 			for(var i=(fadeEls.length-1); i>=0; i-- ){
 				opacity(fadeEls[i],pcnt );
 			}
+			
 		}, settings.fadeOut, cleanUp );
 		
 		// Enable Chaining
@@ -795,6 +812,10 @@ function uiGlide( args )
 		if( settings && settings.onBeforeOpen )
 			settings.onBeforeOpen( self );
 		
+		// Capture the initial scroll position
+		initialScrollPosition = scrollOffset( settings.parent );
+	
+		// Generate dynamica DOM Elements
 		buildUI();
 		
 		// Fade-in the element
@@ -849,10 +870,8 @@ function uiGlide( args )
 			steps.push( {
 				index:index
 				,element:stepEls[i]
-				,set:set || settings.defaultSet
 				,title:title
 				,desc:desc
-				,html:html
 				,transition:settings.transition
 				,minWidth:settings.minWidth
 				,minHeight:settings.minHeight
@@ -860,10 +879,12 @@ function uiGlide( args )
 				,maxHeight:settings.maxHeight
 				,borderWidth:settings.borderWidth
 				,padding:settings.padding
-				,passthrough:passthrough || settings.passthrough
 				,onBeforeStep:settings.onBeforeStep
 				,onAfterStep:settings.onAfterStep
 				,onStep:settings.onStep
+				,set:set || settings.defaultSet
+				,html:html||settings.htmlFocusContent
+				,passthrough:passthrough || settings.passthrough
 				,uiGlide:self
 			} );
 		}
@@ -878,6 +899,9 @@ function uiGlide( args )
 			
 			if( !arr.set ){
 				arr.set = settings.defaultSet
+			}
+			if( !arr.html ){
+				arr.html = settings.htmlFocusContent;
 			}
 			if( !arr.transition ){
 				arr.transition = settings.transition;

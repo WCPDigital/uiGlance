@@ -8,7 +8,7 @@ The uiGlide plugin supports all major browsers **(Chrome, Firefox, Safari, IE)**
 1. Appearance is controlled through CSS and can easily be restyled.
 2. Animations and presentation can be enhanced through numerous timed callbacks.
 3. Leverages HTML5 data attributes, but can be completely unobtrusive with all configuration set through JavaScript.
-4. Lightweight: 12KB of JavaScript (less than 7KBs gzipped).
+4. Lightweight: 16KB of JavaScript (less than 9KBs gzipped).
 
 ## Getting Started
 
@@ -24,7 +24,7 @@ Prebuilt files, themes and examples can be downloaded from http://uiglide.com
 
 ### Including it on your page
 
-Include jQuery, the uiGlide plugin and a CSS theme files on a page. Then apply a few simple "data-" attributes to the elements you want to highlight or explain. Once ready, initialise the guide by calling the `uiGlide` method, followed by the `open` method.
+Include jQuery, the uiGlide plugin and a CSS theme file on a page. Then apply a few simple "data-" attributes to the elements you want to highlight or explain. Once ready, initialise the guide by calling the `uiGlide` method, followed by the `open` method.
 
 ```html
 <head>
