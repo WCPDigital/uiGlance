@@ -250,15 +250,24 @@ function uiGlide( args )
 		};
 	}
 	
-	,createBoxElement = function()
+	,createDivElement = function(html,css,parent,absolute)
 	{
 		var boxEl = self.document.createElement("DIV");
-		boxEl.style.position = "absolute";
-		boxEl.style.display = "block";
-		boxEl.style.width = "0px";
-		boxEl.style.height = "0px";
-		boxEl.style.left = "0px";
-		boxEl.style.top = "0px";
+		boxEl.innerHTML = html||"";
+		boxEl.className = css||"";
+		
+		if( parent && parent.appendChild ){
+			parent.appendChild( boxEl );
+		}
+		
+		if( absolute ){
+			boxEl.style.position = "absolute";
+			boxEl.style.display = "block";
+			boxEl.style.width = "0px";
+			boxEl.style.height = "0px";
+			boxEl.style.left = "0px";
+			boxEl.style.top = "0px";
+		}
 
 		// Return the new object
 		return boxEl;
@@ -598,20 +607,6 @@ function uiGlide( args )
 
 		self.removeEvent( closeBtnEl, "click", _onCloseClick ); 
 		self.removeEvent( closeBtnEl, "touchstart", _onCloseClick ); 
-		
-		// Remove close event when not a touch device
-		if( !isTouchDevice() ){
-			var closeEls = [
-				leftBoxEl
-				,rightBoxEl
-				,topBoxEl
-				,bottomBoxEl
-			];
-			for( var i=0,len=closeEls.length; i<len; i++){
-				self.removeEvent( closeEls[i], "click", _onCloseClick ); 
-				self.removeEvent( closeEls[i], "touchstart", _onCloseClick ); 
-			}
-		}
 	
 		// Remove all elements
 		var els = [
@@ -707,42 +702,82 @@ function uiGlide( args )
 	
 	,buildUI = function( )
 	{
-		// Focus Box and UI
-		focusBoxEl = createBoxElement();
-		settings.parent.appendChild( focusBoxEl );
+		// Background
+		leftBoxEl = createDivElement(
+			null
+			,settings.cssLeftBox
+			,settings.parent
+			,true
+		);
+		rightBoxEl = createDivElement(
+			null
+			,settings.cssRightBox
+			,settings.parent 
+			,true
+		);
+		topBoxEl = createDivElement(
+			null
+			,settings.cssTopBox
+			,settings.parent 
+			,true
+		);
+		bottomBoxEl = createDivElement(
+			null
+			,settings.cssBottomBox
+			,settings.parent 
+			,true
+		);
 
-		focusContentEl = self.document.createElement("DIV");
-		focusContentEl.innerHTML = settings.htmlFocusContent;
-		focusContentEl.className = settings.cssFocusContent;
-		focusBoxEl.appendChild( focusContentEl );
-		
-		titleBoxEl = self.document.createElement("DIV");
-		titleBoxEl.className = settings.cssTitleBox;
-		focusBoxEl.appendChild( titleBoxEl );
+		// Focus Box
+		focusBoxEl = createDivElement(
+			null
+			,null
+			,settings.parent 
+			,true
+		);
 
-		descBoxEl = self.document.createElement("DIV");
-		descBoxEl.className = settings.cssDescBox;
-		focusBoxEl.appendChild( descBoxEl );
+		focusContentEl = createDivElement(
+			settings.htmlFocusContent
+			,settings.cssFocusContent
+			,focusBoxEl
+		);
+		titleBoxEl = createDivElement(
+			null
+			,settings.cssTitleBox
+			,focusBoxEl
+		);
+		descBoxEl = createDivElement(
+			null
+			,settings.cssDescBox
+			,focusBoxEl
+		);				
 		
-		controlsBoxEl = createBoxElement();
-		controlsBoxEl.innerHTML = settings.htmlControlsContent;
-		controlsBoxEl.className = settings.cssControlsBox;
-		settings.parent.appendChild( controlsBoxEl );
+		// Controls
+		controlsBoxEl = createDivElement(
+			settings.htmlControlsContent
+			,settings.cssControlsBox
+			,settings.parent 
+			,true
+		);
+			
+		prevBtnEl = createDivElement(
+			settings.htmlPrevBtn
+			,settings.cssPrevBtn
+			,controlsBoxEl
+		);	
 		
-		prevBtnEl = self.document.createElement("DIV");
-		prevBtnEl.className = settings.cssPrevBtn;
-		prevBtnEl.innerHTML = settings.htmlPrevBtn;
-		controlsBoxEl.appendChild( prevBtnEl );
+		nextBtnEl = createDivElement(
+			settings.htmlNextBtn
+			,settings.cssNextBtn
+			,controlsBoxEl
+		);	
 		
-		nextBtnEl = self.document.createElement("DIV");
-		nextBtnEl.className = settings.cssNextBtn;
-		nextBtnEl.innerHTML = settings.htmlNextBtn;
-		controlsBoxEl.appendChild( nextBtnEl );
-		
-		closeBtnEl = self.document.createElement("DIV");
-		closeBtnEl.className = settings.cssCloseBtn;
-		closeBtnEl.innerHTML = settings.htmlCloseBtn;
-		controlsBoxEl.appendChild( closeBtnEl );
+		closeBtnEl = createDivElement(
+			settings.htmlCloseBtn
+			,settings.cssCloseBtn
+			,controlsBoxEl
+		);	
+
 		
 		self.addEvent( prevBtnEl, "click", _onPrevClick ); 
 		self.addEvent( prevBtnEl, "touchstart", _onPrevClick ); 
@@ -752,37 +787,6 @@ function uiGlide( args )
 		
 		self.addEvent( closeBtnEl, "click", _onCloseClick ); 
 		self.addEvent( closeBtnEl, "touchstart", _onCloseClick ); 
-		
-		// Background
-		leftBoxEl = createBoxElement();
-		leftBoxEl.className = settings.cssLeftBox;
-		settings.parent.appendChild( leftBoxEl );
-
-		rightBoxEl = createBoxElement();
-		rightBoxEl.className = settings.cssRightBox;
-		settings.parent.appendChild( rightBoxEl );
-
-		topBoxEl = createBoxElement();
-		topBoxEl.className = settings.cssTopBox;
-		settings.parent.appendChild( topBoxEl );
-
-		bottomBoxEl = createBoxElement();
-		bottomBoxEl.className = settings.cssBottomBox;
-		settings.parent.appendChild( bottomBoxEl )
-				
-		// Add close event when not a touch device
-		if( !isTouchDevice() ){
-			var closeEls = [
-				leftBoxEl
-				,rightBoxEl
-				,topBoxEl
-				,bottomBoxEl
-			];
-			for( var i=0,len=closeEls.length; i<len; i++){
-				self.addEvent( closeEls[i], "click", _onCloseClick ); 
-				self.addEvent( closeEls[i], "touchstart", _onCloseClick ); 
-			}
-		}
 		
 		// Resize events
 		self.addEvent( settings.parent, "orientationchange", _onWindowResize );
