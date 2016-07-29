@@ -452,16 +452,20 @@
 	
 		,updateParentScroll = function(left,top)
 		{
-			var d = self.document;
-			if( !settings.parent || settings.parent === d.body || settings.parent === d.documentElement ){
+			var d = self.document
+				,p = settings.parent||null
+				,isScrollable = (p.scrollHeight>p.clientHeight) || (p.scrollWidth>p.clientWidth);
+				
+			if( !isScrollable || !p || p === d.body || p === d.documentElement ){
 				d.documentElement.scrollLeft = d.body.scrollLeft = left;
-				d.documentElement.scrollTop = d.body.scrollTop = top
+				d.documentElement.scrollTop = d.body.scrollTop = top;
 			}
 			
 			else{
-				settings.parent.scrollLeft = left;
-				settings.parent.scrollTop = top;
+				p.scrollLeft = left;
+				p.scrollTop = top;
 			}
+
 		}
 		
 		,updateRect = function( el, width, height, left, top, right, bottom )
