@@ -1,6 +1,6 @@
 /*!
- * uiGlide v1.0.0
- * http://uiglide.com
+ * uiGlance v1.0.0
+ * http://uiglance.com
  *
  * Copyright WCP Digital and Patrick Purcell
  * Released under the MIT license
@@ -11,7 +11,7 @@
 (function( $ ){
 	"use strict";
 	
-	function uiGlide( args )
+	function uiGlance( args )
 	{
 		var self = this
 		
@@ -51,7 +51,7 @@
 		,settings = {
 			parent:document.body || null
 			,steps:[]
-			,defaultSet:"uiGlide"
+			,defaultSet:"uiGlance"
 			,resetScrollbars:true
 
 			,fadeIn:1000
@@ -309,7 +309,7 @@
 			
 			// Ensure we actually have a step
 			if( !currentStep || !currentStep.element ){
-				throw new Error("uiGlide: Step not found: Set: "+currentSet+", Index: "+currentStepIndex);
+				throw new Error("uiGlance: Step not found: Set: "+currentSet+", Index: "+currentStepIndex);
 			}
 
 			if( currentStep && currentStep.onBeforeStep )
@@ -640,7 +640,7 @@
 		,close = function()
 		{
 			if( isOpening ){
-				throw new Error("uiGlide: Tried to close before completing the opening.");
+				throw new Error("uiGlance: Tried to close before completing the opening.");
 			}
 			
 			// Begin Closing
@@ -696,7 +696,7 @@
 			
 			// Ensure the set contains steps
 			if( currentSet.length == 0 ){
-				throw new Error("uiGlide: This set is empty or doesn't exist.");
+				throw new Error("uiGlance: This set is empty or doesn't exist.");
 			}
 
 			return sortByIndex( currentSet );
@@ -807,11 +807,11 @@
 		,open = function( stepNum, setName )
 		{
 			if( isClosing ){
-				throw new Error("uiGlide: Tried to open before completing the close.");
+				throw new Error("uiGlance: Tried to open before completing the close.");
 			}
 			
 			if( focusBoxEl ){
-				throw new Error("uiGlide: You can only open one glide at a time.");
+				throw new Error("uiGlance: You can only open one glide at a time.");
 			}
 			
 			// Begin Opening
@@ -891,7 +891,7 @@
 					,set:set || settings.defaultSet
 					,html:html||settings.htmlFocusContent
 					,passthrough:passthrough || settings.passthrough
-					,uiGlide:self
+					,uiGlance:self
 				} );
 			}
 			
@@ -908,20 +908,21 @@
 				if( !arr.html ){
 					arr.html = settings.htmlFocusContent;
 				}
-				if( !arr.transition ){
-					arr.transition = settings.transition;
-				}
-				if( !arr.minWidth ){
-					arr.minWidth = settings.minWidth;
-				}
-				if( !arr.minHeight ){
-					arr.minHeight = settings.minHeight;
-				}
 				if( !arr.maxWidth ){
 					arr.maxWidth = settings.maxWidth;
 				}
 				if( !arr.maxHeight ){
 					arr.maxHeight = settings.maxHeight;
+				}
+				
+				if( arr.transition === undefined || arr.transition === null ){
+					arr.transition = settings.transition;
+				}
+				if( arr.minWidth === undefined || arr.minWidth === null ){
+					arr.minWidth = settings.minWidth;
+				}
+				if( arr.minHeight === undefined || arr.minHeight === null ){
+					arr.minHeight = settings.minHeight;
 				}
 				if( arr.padding === undefined || arr.padding === null ){
 					arr.padding = settings.padding
@@ -932,6 +933,7 @@
 				if( arr.passthrough === undefined || arr.passthrough === null ){
 					arr.passthrough = settings.passthrough
 				}
+				
 				if( !arr.onBeforeStep ){
 					arr.onBeforeStep = settings.onBeforeStep
 				}
@@ -975,7 +977,7 @@
 			}
 
 			for( var i=0, len=b.length; i<len; i++ ){
-				if( !a[i] && b[i] ){
+				if( a[i] === undefined && b[i] ){
 					a[i] = b[i];
 				}
 			}
@@ -1020,15 +1022,18 @@
 		,init = function()
 		{
 			if( args ){
+
+				// Ensure there is a parent element
+				args.parent = args.parent || settings.parent;
+			
 				settings = $.extend( {}, settings, args );
-				settings.parent = settings.parent || document.body;
 				self.window = args.window || window;
 				self.document = args.document || document;
 			}
 			
 			// Ensure we have a parent DOMElement to attach our dynamic elements to
 			if( !( settings.parent && settings.parent.appendChild ) ){
-				throw new Error("uiGlide: Cannot append elements to the settings.parent element.");
+				throw new Error("uiGlance: Cannot append elements to the settings.parent element.");
 			}
 
 			// Travers the DOM and find all UI Steps
@@ -1103,15 +1108,15 @@
 		// Constructor
 		init();
 	}
-	$.uiGlide = function( args )
+	$.uiGlance = function( args )
 	{
-		return new uiGlide( args );
+		return new uiGlance( args );
 	}
-    $.fn.uiGlide = function( args )
+    $.fn.uiGlance = function( args )
 	{
 		return args = args||{}
 			,args.parent = $(this)[0] || null
-			,new uiGlide( args );
+			,new uiGlance( args );
 	}
 	
 }( jQuery ));

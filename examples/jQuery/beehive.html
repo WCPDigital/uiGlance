@@ -15,10 +15,13 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js"></script>
 		<![endif]-->
 		
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="../../src/3rdparty/jquery-1.11.2.min.js"><\/script>')</script>
+
         <script src="js/main.js"></script>
 		
-        <link href="../../css/uiglance.default.css" rel="stylesheet">
-        <script src="../../src/Standalone/uiglance.min.js"></script>
+        <link href="../../css/uiglance.beehive.css" rel="stylesheet">
+        <script src="../../src/jQuery/jquery.uiglance.js"></script>
     </head>
     <body>
 
@@ -72,7 +75,7 @@
         </div>
 		<script>
 		"use strict";
-		var uig = new uiGlance({
+		var uig = $("body").uiGlance({
 			onBeforeOpen:function(ui){
 				console.log("Before Open");
 			}

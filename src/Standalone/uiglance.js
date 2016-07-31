@@ -1,6 +1,6 @@
 /*!
- * uiGlide v1.0.0
- * http://uiglide.com
+ * uiGlance v1.0.0
+ * http://uiglance.com
  *
  * Copyright WCP Digital and Patrick Purcell
  * Released under the MIT license
@@ -9,7 +9,7 @@
  * Date: 2016-07-25
  */
 "use strict";
-function uiGlide( args )
+function uiGlance( args )
 {
 	var self = this
 	
@@ -49,7 +49,7 @@ function uiGlide( args )
 	,settings = {
 		parent:document.body || null
 		,steps:[]
-		,defaultSet:"uiGlide"
+		,defaultSet:"uiGlance"
 		,resetScrollbars:true
 
 		,fadeIn:1000
@@ -110,7 +110,7 @@ function uiGlide( args )
 	{
 		return "ontouchstart" in window || navigator.maxTouchPoints;
 	}
-	
+
 	,lerp = function( a, b, pcnt )
 	{
 		return a + pcnt * (b - a);
@@ -307,7 +307,7 @@ function uiGlide( args )
 		
 		// Ensure we actually have a step
 		if( !currentStep || !currentStep.element ){
-			throw new Error("uiGlide: Step not found: Set: "+currentSet+", Index: "+currentStepIndex);
+			throw new Error("uiGlance: Step not found: Set: "+currentSet+", Index: "+currentStepIndex);
 		}
 	
 		if( currentStep && currentStep.onBeforeStep )
@@ -637,7 +637,7 @@ function uiGlide( args )
 	,close = function()
 	{
 		if( isOpening ){
-			throw new Error("uiGlide: Tried to close before completing the opening.");
+			throw new Error("uiGlance: Tried to close before completing the opening.");
 		}
 		
 		// Begin Closing
@@ -694,7 +694,7 @@ function uiGlide( args )
 		
 		// Ensure the set contains steps
 		if( currentSet.length == 0 ){
-			throw new Error("uiGlide: This set is empty or doesn't exist.");
+			throw new Error("uiGlance: This set is empty or doesn't exist.");
 		}
 
 		return sortByIndex( currentSet );
@@ -806,11 +806,11 @@ function uiGlide( args )
 	,open = function( stepNum, setName )
 	{
 		if( isClosing ){
-			throw new Error("uiGlide: Tried to open before completing the close.");
+			throw new Error("uiGlance: Tried to open before completing the close.");
 		}
 			
 		if( focusBoxEl ){
-			throw new Error("uiGlide: You can only open one glide at a time.");
+			throw new Error("uiGlance: You can only open one glide at a time.");
 		}
 		
 		// Begin Opening
@@ -892,7 +892,7 @@ function uiGlide( args )
 				,set:set || settings.defaultSet
 				,html:html||settings.htmlFocusContent
 				,passthrough:passthrough || settings.passthrough
-				,uiGlide:self
+				,uiGlance:self
 			} );
 		}
 		
@@ -902,28 +902,29 @@ function uiGlide( args )
 	,processSettingsSteps = function( arr )
 	{
 		for(var i=0,len=arr.length; i<len; i++){
-			arr.index = i;
 			
+			arr.index = i;
 			if( !arr.set ){
 				arr.set = settings.defaultSet
 			}
 			if( !arr.html ){
 				arr.html = settings.htmlFocusContent;
 			}
-			if( !arr.transition ){
-				arr.transition = settings.transition;
-			}
-			if( !arr.minWidth ){
-				arr.minWidth = settings.minWidth;
-			}
-			if( !arr.minHeight ){
-				arr.minHeight = settings.minHeight;
-			}
 			if( !arr.maxWidth ){
 				arr.maxWidth = settings.maxWidth;
 			}
 			if( !arr.maxHeight ){
 				arr.maxHeight = settings.maxHeight;
+			}
+			
+			if( arr.transition === undefined || arr.transition === null ){
+				arr.transition = settings.transition;
+			}
+			if( arr.minWidth === undefined || arr.minWidth === null ){
+				arr.minWidth = settings.minWidth;
+			}
+			if( arr.minHeight === undefined || arr.minHeight === null ){
+				arr.minHeight = settings.minHeight;
 			}
 			if( arr.padding === undefined || arr.padding === null ){
 				arr.padding = settings.padding
@@ -932,17 +933,19 @@ function uiGlide( args )
 				arr.borderWidth = settings.borderWidth
 			}
 			if( arr.passthrough === undefined || arr.passthrough === null ){
-				arr.passthrough = settings.passthrough;
+				arr.passthrough = settings.passthrough
 			}
+			
 			if( !arr.onBeforeStep ){
-				arr.onBeforeStep = settings.onBeforeStep;
+				arr.onBeforeStep = settings.onBeforeStep
 			}
 			if( !arr.onAfterStep ){
-				arr.onAfterStep = settings.onAfterStep;
+				arr.onAfterStep = settings.onAfterStep
 			}
 			if( !arr.onStep ){
 				arr.onStep = settings.onStep
 			}
+			
 		}
 		return arr;
 	}
@@ -977,11 +980,11 @@ function uiGlide( args )
 		}
 		
 		for( var i=0, len=b.length; i<len; i++ ){
-			if( !a[i] && b[i] ){
+			if( a[i] === undefined && b[i] ){
 				a[i] = b[i];
 			}
 		}
-		
+
 		return self.arrayClean( a );
 	}
 
@@ -1016,22 +1019,25 @@ function uiGlide( args )
 			goto( currentStepIndex );
 		}, 250);
 	}
-	
+
 	/**
 	* Constructor
 	*/
 	,init = function()
 	{
 		if( args ){
+
+			// Ensure there is a parent element
+			args.parent = args.parent || settings.parent;
+		
 			settings = self.wash( settings, args );
-			settings.parent = settings.parent || document.body;
 			self.window = args.window || window;
 			self.document = args.document || document;
 		}
 		
 		// Ensure we have a parent DOMElement to attach our dynamic elements to
 		if( !( settings.parent && settings.parent.appendChild ) ){
-			throw new Error("uiGlide: Cannot append elements to the settings.parent element.");
+			throw new Error("uiGlance: Cannot append elements to the settings.parent element.");
 		}
 
 		// Travers the DOM and find all UI Steps
@@ -1105,13 +1111,13 @@ function uiGlide( args )
 	// Constructor
 	init();
 };
-uiGlide.prototype.constructor = uiGlide;
+uiGlance.prototype.constructor = uiGlance;
 
 /**
 * Interface methods
 * These could be replaced by a 3rd Party library. eg. jQuery
 */
-uiGlide.prototype.arrayClean = function( arr )
+uiGlance.prototype.arrayClean = function( arr )
 {
 	var nArr = [];
 	for(var i = 0, len = arr.length; i<len; i++ ){
@@ -1119,7 +1125,7 @@ uiGlide.prototype.arrayClean = function( arr )
 	}
 	return nArr;
 }
-uiGlide.prototype.wash = function( a, b )
+uiGlance.prototype.wash = function( a, b )
 {
 	for( var name in b ){
 		if( !b.hasOwnProperty(name) ) 
@@ -1131,24 +1137,24 @@ uiGlide.prototype.wash = function( a, b )
 	}
 	return a;
 }
-uiGlide.prototype.removeElement = function( el )
+uiGlance.prototype.removeElement = function( el )
 {
 	if( el && el.parentElement )
 		el.parentElement.removeChild( el );
 
 	return el = null;
 }
-uiGlide.prototype.hasClass = function( el, className ) 
+uiGlance.prototype.hasClass = function( el, className ) 
 {
 	return el && !!el.className.match( new RegExp("(\\s|^)"+className+"(\\s|$)") );
 }
-uiGlide.prototype.addClass = function( el, className ) 
+uiGlance.prototype.addClass = function( el, className ) 
 {
 	if( !this.hasClass( el, className ) ) 
 		el.className += " " + className;
 	return;
 }
-uiGlide.prototype.removeClass = function( el, className )
+uiGlance.prototype.removeClass = function( el, className )
 {
 	if( this.hasClass(el,className) ){
 		var reg = new RegExp("(\\s|^)" + className + "(\\s|$)");
@@ -1157,7 +1163,7 @@ uiGlide.prototype.removeClass = function( el, className )
 	}
 	return;
 }
-uiGlide.prototype.getElementByAttr = function( attr, parentEl, firstOnly )
+uiGlance.prototype.getElementByAttr = function( attr, parentEl, firstOnly )
 {
 	parentEl = parentEl || this.document;
 	
@@ -1175,7 +1181,7 @@ uiGlide.prototype.getElementByAttr = function( attr, parentEl, firstOnly )
 	}
 	return !firstOnly ? result : result[0]||null;
 }
-uiGlide.prototype.getAttr = function( el, attr ) 
+uiGlance.prototype.getAttr = function( el, attr ) 
 {
 	var result = (el.getAttribute && el.getAttribute(attr)) || null;
 	if( !result ) {
@@ -1189,7 +1195,7 @@ uiGlide.prototype.getAttr = function( el, attr )
 	}
 	return result;
 }
-uiGlide.prototype.addEvent = function( el, ev, callback ) 
+uiGlance.prototype.addEvent = function( el, ev, callback ) 
 {
 	// For all major browsers, except IE 8 and earlier
 	if( el.addEventListener ){
@@ -1203,7 +1209,7 @@ uiGlide.prototype.addEvent = function( el, ev, callback )
 
 	return el;
 }
-uiGlide.prototype.removeEvent = function( el, ev, callback ) 
+uiGlance.prototype.removeEvent = function( el, ev, callback ) 
 {
 	// For all major browsers, except IE 8 and earlier
 	if( el.removeEventListener ){
@@ -1217,7 +1223,7 @@ uiGlide.prototype.removeEvent = function( el, ev, callback )
 	
 	return el;
 }
-uiGlide.prototype.normaliseEvent = function( e ) 
+uiGlance.prototype.normaliseEvent = function( e ) 
 {
 	// Fallback for IE
 	e = e || this.window.event;

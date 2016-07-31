@@ -1,9 +1,8 @@
 .uig-titlebox{
 	position:absolute;
-	top:0;
+	bottom:0;
 	left:0;
 	right:0;
-	min-height:45px;
 	z-index:1;
 	
 	padding:4px 8px;
@@ -11,26 +10,63 @@
 	line-height:1.2em;
 
 	background-color:#ffcc00;
-	color:#000;
+	color:#FFF;
+	
+	-webkit-text-shadow:2px 2px 1px #333;
+	-moz-text-shadow:2px 2px 1px #333;
+	text-shadow:2px 2px 1px #333;
 }
 
 .uig-descbox{
 	position:absolute;
-	bottom:0;
-	left:0;
-	right:0;
+	width:180px;
+	top:12px;
+	left:auto;
+	right:40px;
 	z-index:1;
 	
-	padding:4px 8px;
+	padding:12px;
 	font-size:1.1em;
 	line-height:1.2em;
 
-	background-color:#ffcc00;
+	background-color:#FFF;
 	color:#000;
+	text-align:center;
+	
+
+	border:2px solid #000;
+	-webkit-border-radius:50px;
+	-moz-border-radius:50px;
+	border-radius:50px;
+	
+	-webkit-box-shadow:-2px 2px 1px 0px #999;
+	-moz-box-shadow:-2px 2px 1px 0px #999;
+	box-shadow:-2px 2px 1px 0px #999;
+}
+
+.uig-descbox:after,
+.uig-descbox:before {
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid #FFF;
+    bottom: -20px;
+    content: '';
+    left: 50%;
+    margin-left: -20px;
+    position: absolute;
+}
+
+.uig-descbox:before {
+    border-left: 23px solid transparent;
+    border-right: 23px solid transparent;
+    border-top: 23px solid;
+    border-top-color: inherit;
+    bottom: -23px;
+    margin-left: -23px;
 }
 
 .uig-focusbox{
-	border:1px solid #FFF;
+	border:2px solid #000;
 	
 	-webkit-box-shadow:0 1px 6px 0px #777;
 	-moz-box-shadow:0 1px 6px 0px #777;
@@ -38,9 +74,9 @@
 	box-shadow:0 1px 6px 0px #777;
 	z-index:9998;
 	
-	-webkit-border-radius:5px;
-	-moz-border-radius:5px;
-	border-radius:5px;
+	-webkit-border-radius:9px;
+	-moz-border-radius:9px;
+	border-radius:9px;
 	overflow:hidden;
 	
 	margin:-1px 0 0 -1px;

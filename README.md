@@ -1,9 +1,9 @@
-[uiGlide jQuery Plugin](http://uiglide.com/) - An easy way to guide your users
+[uiGlance jQuery Plugin](http://uiglance.com/) - An easy way to guide your users
 ================================
 
 **A cross-browser, mobile-responsive JavaScript and jQuery plugin** for user interface (UI) guides, interactive application help, introductions and step-by-step workflow demonstrations.
 
-The uiGlide plugin supports all major browsers **(Chrome, Firefox, Safari, IE)** and will even work as as far back as **IE7+ if you include [Respond.js](https://github.com/scottjehl/Respond) and [html5shiv](https://github.com/aFarkas/html5shiv)**.
+The uiGlance plugin supports all major browsers **(Chrome, Firefox, Safari, IE)** and will even work as as far back as **IE7+ if you include [Respond.js](https://github.com/scottjehl/Respond) and [html5shiv](https://github.com/aFarkas/html5shiv)**.
 
 1. Appearance is controlled through CSS and can easily be restyled.
 2. Animations and presentation can be enhanced through numerous timed callbacks.
@@ -14,21 +14,21 @@ The uiGlide plugin supports all major browsers **(Chrome, Firefox, Safari, IE)**
 
 ### Try it out
 
-jQuery demonstration: [See here](http://uiglide.com/uiGlide/examples/jQuery/)
+jQuery demonstration: [See here](http://uiglance.com/uiGlance/examples/jQuery/)
 
-Standalone demonstration: [See here](http://uiglide.com/uiGlide/examples/Standalone/)
+Standalone demonstration: [See here](http://uiglance.com/uiGlance/examples/Standalone/)
 
 ### Downloading the prebuilt files
 
-Prebuilt files, themes and examples can be downloaded from http://uiglide.com
+Prebuilt files, themes and examples can be downloaded from http://uiglance.com
 
 ### Including it on your page
 
-Include jQuery, the uiGlide plugin and a CSS theme file on a page. Then apply a few simple "data-" attributes to the elements you want to highlight or explain. Once ready, initialise the guide by calling the `uiGlide` method, followed by the `open` method.
+Include jQuery, the uiGlance plugin and a CSS theme file on a page. Then apply a few simple "data-" attributes to the elements you want to highlight or explain. Once ready, initialise the guide by calling the `uiGlance` method, followed by the `open` method.
 
 ```html
 <head>
-	<link href="uiglide.default.css" rel="stylesheet">
+	<link href="uiglance.default.css" rel="stylesheet">
 </head>
 <body>
 	<div id="myDOMElementId" data-uigset="demo_set" data-uigstep="0" data-uigtitle="My title" 
@@ -41,23 +41,23 @@ Include jQuery, the uiGlide plugin and a CSS theme file on a page. Then apply a 
 	</div>
 </body>
 <script src="jquery.js"></script>
-<script src="jquery.uiglide.js"></script>
+<script src="jquery.uiglance.js"></script>
 <script>
-var uig = $("body").uiGlide().open();
+var uig = $("body").uiGlance().open();
 </script>
 ```
-Alternatively, if you don't use jQuery or want to incorporate uiGlide into your choice of library, you can use the `Standalone` version (which is almost the same in every way).
+Alternatively, if you don't use jQuery or want to incorporate uiGlance into your choice of library, you can use the `Standalone` version (which is almost the same in every way).
 
 ```html
-<script src="uiglide.js"></script>
+<script src="uiglance.js"></script>
 <script>
-var uig = new uiGlide().open();
+var uig = new uiGlance().open();
 </script>
 ```
 
-It's also entirely possible to configure uiGlide using JavaScript notation.
+It's also entirely possible to configure uiGlance using JavaScript notation.
 ```js
-var uig = new uiGlide( {
+var uig = new uiGlance( {
 	onBeforeOpen:function(ui){
 		console.log("Before Open");
 	}
@@ -69,8 +69,8 @@ var uig = new uiGlide( {
 			element:document.getElementById("myDOMElementId")
 			,index:0
 			,set:"demo_set"
-			,title:"Welcome to uiGlide"
-			,desc:"uiGlide helps you communicate with your audience."
+			,title:"Welcome to uiGlance"
+			,desc:"uiGlance helps you communicate with your audience."
 			,html:"<p>Custom inner HTML content</p>"
 			,onStep:function(ui){
 				var stepIdx = ui.getCurrentStepIndex()
@@ -89,7 +89,7 @@ var uig = new uiGlide( {
 } ).open();
 ```
 
-For more information on how to setup a callbacks, overrides and customizations, [check the documentation](http://uiglide.com/documentation/).
+For more information on how to setup a callbacks, overrides and customizations, [check the documentation](http://uiglance.com/documentation/).
 
 ## Reporting issues and contributing code
 
@@ -98,4 +98,4 @@ See the [Contributing Guidelines](CONTRIBUTING.md) for details.
 ## License
 Copyright &copy; WCP Digital &amp; Patrick Purcell<br>
 Licensed under the [MIT license](http://www.opensource.org/licenses/mit-license.php).
-<br>**Commercial use?** Go for it! You can include uiGlide in your commercial products.
+<br>**Commercial use?** Go for it! You can include uiGlance in your commercial products.
