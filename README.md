@@ -95,7 +95,7 @@ For more information on how to setup a callbacks, overrides and customizations, 
 
 See the [Contributing Guidelines](CONTRIBUTING.md) for details.
 
-## License
-Copyright &copy; WCP Digital &amp; Patrick Purcell<br>
+##License
+Copyright &copy; [WCP Digital](http://www.wcpdigital.com.au) &amp; [Patrick Purcell](http://patrickpurcell.bio)<br>
 Licensed under the [MIT license](http://www.opensource.org/licenses/mit-license.php).
-<br>**Commercial use?** Go for it! You can include uiGlance in your commercial products.
+<br>**Commercial use?** Go for it! You can include it in your commercial products.
