@@ -2,9 +2,11 @@
  * uiGlance v1.0.0
  * http://uiglance.com
  *
- * Copyright WCP Digital and Patrick Purcell
- * Released under the MIT license
- * http://opensource.org/licenses/MIT
+ * @author Patrick Purcell
+ * @copyright Copyright (c) 2016 WCP Digital
+ * @license http://opensource.org/licenses/MIT
+ * @link http://www.wcpdigital.com.au
+ * @link http://patrickpurcell.bio
  *
  * Date: 2016-07-25
  */
