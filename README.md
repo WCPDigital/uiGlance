@@ -1,4 +1,4 @@
-[uiGlance jQuery Plugin](http://uiglance.com/) - An easy way to guide your users
+uiGlance jQuery Plugin - An easy way to guide your users
 ================================
 
 **A cross-browser, mobile-responsive JavaScript and jQuery plugin** for user interface (UI) guides, interactive application help, introductions and step-by-step workflow demonstrations.
@@ -14,13 +14,9 @@ The uiGlance plugin supports all major browsers **(Chrome, Firefox, Safari, IE)*
 
 ### Try it out
 
-jQuery demonstration: [See here](http://uiglance.com/uiGlance/examples/jQuery/)
+jQuery demonstration: [See here](https://www.wcpdigital.com.au/git/uiglance/example/jQuery/)
 
-Standalone demonstration: [See here](http://uiglance.com/uiGlance/examples/Standalone/)
-
-### Downloading the prebuilt files
-
-Prebuilt files, themes and examples can be downloaded from http://uiglance.com
+Standalone demonstration: [See here](https://www.wcpdigital.com.au/git/uiglance/example/Standalone/)
 
 ### Including it on your page
 
@@ -88,8 +84,6 @@ var uig = new uiGlance( {
 	]
 } ).open();
 ```
-
-For more information on how to setup a callbacks, overrides and customizations, [check the documentation](http://uiglance.com/documentation/).
 
 ## Reporting issues and contributing code
 
